@@ -1,6 +1,8 @@
 import 'package:postgres/postgres.dart';
 
-Future open_connection(connection) async {
+var connection;
+
+Future open_connection() async {
   connection = PostgreSQLConnection(
     "10.0.2.2",
      5432,
@@ -15,4 +17,4 @@ Future open_connection(connection) async {
         // replicationMode: ReplicationMode.none
         );
   await connection.open();
-} 
+}

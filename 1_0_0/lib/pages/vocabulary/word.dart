@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'api.dart';
+import '../../api.dart';
 
 class WordView extends StatefulWidget{
 
@@ -149,7 +149,7 @@ class WordViewState extends State<WordView> {
         padding: EdgeInsets.all(16.0),
         child: ElevatedButton(
           onPressed: () async {
-            await open_connection(connection);
+            await open_connection();
             await connection.query();
           },
           child: Text("Создать")),),
