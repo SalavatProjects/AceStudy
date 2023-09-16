@@ -1,12 +1,9 @@
-import 'package:ace_study/settings.dart';
+import 'package:ace_study/utils/settings.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../config.dart';
-import '../page_bloc/page_bloc.dart';
 
 class UserSettings extends StatefulWidget {
-  UserSettings({super.key});
+  const UserSettings({super.key});
 
   @override
   State<UserSettings> createState() => UserSettingsState();
@@ -28,7 +25,7 @@ class UserSettingsState extends State<UserSettings> {
     return Scaffold(
       body: Column(
         children: [
-          ListTile(title: Text('Русский'),
+          ListTile(title: const Text('Русский'),
           leading: Radio<String>(
             groupValue: app_language,
             value: 'ru',
@@ -38,7 +35,7 @@ class UserSettingsState extends State<UserSettings> {
               });
             }),
             ),
-            ListTile(title: Text('English'),
+            ListTile(title: const Text('English'),
             leading: Radio<String>(
             groupValue: app_language,
             value: 'en',

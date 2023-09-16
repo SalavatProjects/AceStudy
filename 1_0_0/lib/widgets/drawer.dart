@@ -1,10 +1,12 @@
-import 'package:ace_study/page_bloc/page_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'settings.dart';
+import '../utils/settings.dart';
+import '../blocs/page/page_bloc.dart';
 
 class DrawerView extends StatelessWidget {
+  const DrawerView({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -46,7 +48,7 @@ class DrawerView extends StatelessWidget {
                   ),
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 20,
               ),
               DrawerButtons(
@@ -54,7 +56,7 @@ class DrawerView extends StatelessWidget {
                 icon: Icons.account_circle,
                 page_name: 'main',
               ),
-              SizedBox(
+              const SizedBox(
                 height: 20,
               ),
               DrawerButtons(
@@ -62,7 +64,7 @@ class DrawerView extends StatelessWidget {
                 icon: Icons.format_color_text_rounded,
                 page_name: 'vocabularies',
               ),
-              SizedBox(
+              const SizedBox(
                 height: 20,
               ),
               // DrawerButtons(
@@ -113,7 +115,7 @@ class DrawerButtons extends StatelessWidget {
           ),
           label: Text(
             button_name,
-            style: TextStyle(fontSize: 20),
+            style: const TextStyle(fontSize: 20),
           )),
     );
   }

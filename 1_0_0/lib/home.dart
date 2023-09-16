@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'config.dart';
-import 'drawer.dart';
-import 'page_bloc/page_bloc.dart';
-import 'settings.dart';
+import 'config/config.dart';
+import 'widgets/drawer.dart';
+import 'blocs/page/page_bloc.dart';
+import 'utils/settings.dart';
 
 class HomeView extends StatefulWidget {
-  HomeView({super.key});
+  const HomeView({super.key});
 
   @override
   State<HomeView> createState() => HomeViewState();
@@ -17,6 +17,7 @@ class HomeViewState extends State<HomeView> {
   final GlobalKey<ScaffoldState> _key = GlobalKey();
 
   // PageBloc _pageBloc = PageBloc();
+  @override
   void initState() {
     super.initState();
     // PageBloc().add(PageChangeEvent(page_name: 'main'));
@@ -30,24 +31,24 @@ class HomeViewState extends State<HomeView> {
     return Scaffold(
       key: _key,
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(56),
+        preferredSize: const Size.fromHeight(56),
         child: BlocBuilder<PageBloc, PageState>(
           builder: (context, state) {
-            Map <String, String> appBar_titles = {
+            Map <String, String> appbarTitles = {
               'main' : settings_language[app_language]!.main_page_title,
               'vocabularies' : settings_language[app_language]!.vocabularies_page_title,
               'settings' : settings_language[app_language]!.settings_page_title,
               };
             return AppBar(
               title: Text(
-                appBar_titles[app_page]!,
-                style: TextStyle(
+                appbarTitles[Config.app_page]!,
+                style: const TextStyle(
                   color: Colors.white,
                 ),
               ),
               centerTitle: true,
               leading: IconButton(
-                icon: Icon(
+                icon: const Icon(
                   Icons.menu,
                   size: 26,
                 ),
@@ -64,13 +65,13 @@ class HomeViewState extends State<HomeView> {
       body: BlocBuilder<PageBloc, PageState>(
         builder: (context, state) {
           if (state is PageChanged) {
-            return pages[app_page]!;
+            return Config.pages[Config.app_page]!;
           } else {
-            return pages[app_page]!;
+            return Config.pages[Config.app_page]!;
           }
         },
       ),
-      drawer: DrawerView(),
+      drawer: const DrawerView(),
     );
   }
 }

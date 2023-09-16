@@ -1,10 +1,11 @@
 import 'package:ace_study/app.dart';
-import 'package:ace_study/pages/vocabulary/vocabularies.dart';
+import 'package:ace_study/pages/vocabularies_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:ace_study/api.dart';
-import 'package:ace_study/config.dart';
+import '../utils/postgres_conn.dart';
+import '../config/config.dart';
+import '../utils/validators.dart';
 
 
 // ignore: must_be_immutable
@@ -76,11 +77,14 @@ late TextEditingController _nameVocabularyController;
                     
                     ),
                     validator: (text) {
-                      if (text == null || text.isEmpty) {
-                        return "Поле не должно быть пустым";
-                      }
-                      return null;
-                    },
+                      if(Validator.checkIsTextIsEmpty(text)) {
+                    return 'Поле не должно быть пустым';
+                  } else if (Validator.checkTextLength(text!)){
+                    return 'Допускается длина только ${Config.maxAvailablTextLength} символов';
+                  } else {
+                    return null;
+                  }
+                      },
                     
                     ),
               ),
@@ -101,9 +105,9 @@ late TextEditingController _nameVocabularyController;
         child: ElevatedButton(
           onPressed: () async {
             if (_formKey.currentState!.validate()) {
-              await open_connection();
-              await connection.query('INSERT INTO test.dictionary (name, icon, type, created_at, updated_at, user_id)'+
-              ' VALUES (\'${_nameVocabularyController.text.trim().capitalize()}\', null, \'${_vocabularyType}\', current_timestamp(3), current_timestamp(3), 4)');
+              await Connect.open_connection();
+              await Connect.connection.query('INSERT INTO study_english.dictionary (name, icon, type, created_at, updated_at, user_id)'+
+              ' VALUES (\'${_nameVocabularyController.text.trim().capitalize()}\', null, \'${_vocabularyType}\', current_timestamp(3), current_timestamp(3), 1)');
               _nameVocabularyController.clear();
               Navigator.push(context, MaterialPageRoute(builder: (context) => App()));
             }

@@ -3,11 +3,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'home.dart';
-import 'page_bloc/page_bloc.dart';
-import 'pages/vocabulary/voc_bloc/voc_page_bloc.dart';
+import 'blocs/page/page_bloc.dart';
+import 'blocs/vocabulary/voc_page_bloc.dart';
+import 'blocs/word_translation/word_translation_bloc.dart';
+// import 'blocs/test/test_bloc.dart';
 
 class App extends StatelessWidget {
-  App({super.key});
+  const App({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -15,22 +17,25 @@ class App extends StatelessWidget {
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
-    return MaterialApp(
-      home: Scaffold(
-        body: MultiBlocProvider(
-          providers: [
-            BlocProvider(
-              lazy: false,
-              create: (context) => PageBloc(),
-            ),
-            BlocProvider(
-              lazy: false,
-              create: (context) => VocPageBloc(),
-            ),
-          ],
-          child: HomeView(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+                lazy: false,
+                create: (context) => PageBloc(),
+              ),
+        BlocProvider(
+                lazy: false,
+                create: (context) => VocPageBloc(),
+              ),
+        BlocProvider(
+          lazy: false,
+          create: (context) => WordTranslationBloc())
+      ],
+      child: MaterialApp(
+        home: Scaffold(
+          body: const HomeView(),
+          ),
         ),
-      ),
-    );
+      );
   }
 }

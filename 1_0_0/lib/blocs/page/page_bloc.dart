@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 
-import '../config.dart';
+import '../../config/config.dart';
 
 part 'page_event.dart';
 part 'page_state.dart';
@@ -14,8 +14,8 @@ class PageBloc extends Bloc<PageEvent, PageState> {
     });
 
     on<PageChangeEvent>((event, emit) {
-      // emit(PageInitial());
-      app_page = event.page_name;
+
+      Config.app_page = event.page_name;
       emit(PageChanged());
     },);
   }
