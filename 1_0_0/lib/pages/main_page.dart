@@ -1,10 +1,12 @@
+import 'package:ace_study/models/user.dart';
 import 'package:flutter/material.dart';
 
 import 'package:ace_study/utils/settings.dart';
 
 class MainView extends StatelessWidget {
-  const MainView({super.key});
+  MainView({super.key});
 
+  User _user = User();
   @override
   Widget build(BuildContext context) {
     return SafeArea(

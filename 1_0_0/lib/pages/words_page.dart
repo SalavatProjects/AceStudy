@@ -1,20 +1,23 @@
-import 'package:ace_study/blocs/test/test_bloc.dart';
-import 'package:ace_study/blocs/word_translation/word_translation_bloc.dart';
 import 'package:ace_study/config/config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../models/word_translation.dart';
 import '../utils/validators.dart';
-import '../functions/server.dart';
+import '../functions/api.dart';
 import '../app.dart';
 import '../widgets/flushbar.dart';
+import '../functions/modify.dart';
 
 class WordsView extends StatefulWidget {
-  int vocabulary_id;
-  String vocabulary_type;
-  WordsView(
-      {super.key, required this.vocabulary_id, required this.vocabulary_type});
+  int vocabularyId;
+  String vocabularyType;
+  Map<String, List<String>> wordsTranslations;
+  WordsView({
+      super.key, 
+      required this.vocabularyId, 
+      required this.vocabularyType,
+      required this.wordsTranslations,
+      });
 
   @override
   State<WordsView> createState() => WordsViewState();
@@ -31,22 +34,15 @@ class WordsViewState extends State<WordsView> {
   final RegExp _cyrillicRegExp = RegExp(r'[А-Яа-яЁё]+');
   List<String> _currentTranslationList = [];
   final List<String> _currentTranslationListWithDuplicates = [];
-  List<WordTranslation> _wordsTranslationsList = [];
-  // WordTranslationBloc _wordsTranslationsBloc = WordTranslationBloc();
+  List<String> _words = [];
+  Map<String, List<String>> _wordsTransaltionsMap = {};
+  Map<String, List<String>> testMap = {};
 
   @override
   void initState() {
     super.initState();
-    // _wordsTranslationsBloc = WordTranslationBloc();
-    // _wordsTranslationsBloc.add(WordTranslationIsGettingReadyEvent(
-    // //   vocabularyId: widget.vocabulary_id, 
-    // // vocabularyType: widget.vocabulary_type
-    // ));
-    BlocProvider.of<WordTranslationBloc>(context).add(WordTranslationIsGettingReadyEvent(
-      vocabularyId: widget.vocabulary_id, 
-      vocabularyType: widget.vocabulary_type
-      ));
-
+    _wordsTransaltionsMap = Map.from(widget.wordsTranslations);
+    _words = _wordsTransaltionsMap.keys.toList();
   }
 
   @override
@@ -56,14 +52,8 @@ class WordsViewState extends State<WordsView> {
     super.dispose();
   }
 
-/*   Future<List<WordTranslation>> _wordsTranslationsListFuture(
-      int vocabularyId, String vocabularyType) {
-    return Server.getWordsFromVocabulary(vocabularyId, vocabularyType);
-  } */
-
   @override
   Widget build(BuildContext context) {
-    
     return Scaffold(
       appBar: AppBar(
         title: const Text('Заполнение словаря'),
@@ -76,18 +66,12 @@ class WordsViewState extends State<WordsView> {
               padding: const EdgeInsets.symmetric(vertical: 0.0, horizontal: 16.0),
               child: Column(children: [
                 Text(
-                    'Впишите минимум ${Config.minAvailableWordsInVocabulary} слов'),
+                    'Впишите минимум ${Config.getMinAvailableWordsInVocabulary} слов'),
                 // if (_wordsTranslationsList.isNotEmpty)
-                BlocBuilder<WordTranslationBloc, WordTranslationState>(
-                  builder: (context, state) {
-                    // print(state);
-                    if (state is WordTranslationsIsReady)
-                    {
-                    _wordsTranslationsList = state.wordTranslationsLoaded;
-                    return ListView.builder(
+                    ListView.builder(
                                   physics: const NeverScrollableScrollPhysics(),
                                   shrinkWrap: true,
-                                  itemCount: _wordsTranslationsList.length,
+                                  itemCount: _words.length,
                                   itemBuilder: (BuildContext context, int index) {
                                     return Column(
                                       children: [
@@ -96,7 +80,7 @@ class WordsViewState extends State<WordsView> {
                                             Expanded(
                                                 flex: 4,
                                                 child:
-                                                    Text(_wordsTranslationsList[index].word)),
+                                                    Text(_words[index])),
                                             Expanded(
                                                 flex: 1,
                                                 child: IconButton(
@@ -104,14 +88,16 @@ class WordsViewState extends State<WordsView> {
                                                   icon: const Icon(Icons.remove),
                                                   onPressed: () {
                                                     setState(() {
-                                                      if (_wordsTranslationsList.length <
-                                                          Config.minAvailableWordsInVocabulary +
-                                                              1) {
+                                                      if (_words.length <
+                                                          Config.getMinAvailableWordsInVocabulary +
+                                                              1 && _words.length <= Config.getMaxAvailableWordsInVocabulary) {
                                                         _submit_button_active = false;
                                                       } else {
                                                         _submit_button_active = true;
                                                       }
-                                                      _wordsTranslationsList.removeAt(index);
+                                                      _wordsTransaltionsMap.remove(_words[index]);
+                                                      _words.removeAt(index);
+                                                      
                                                     });
                                                   },
                                                 ))
@@ -120,9 +106,7 @@ class WordsViewState extends State<WordsView> {
                                         ListView.builder(
                                             physics: const NeverScrollableScrollPhysics(),
                                             shrinkWrap: true,
-                                            itemCount: _wordsTranslationsList[index]
-                                                .translationList
-                                                .length,
+                                            itemCount: _wordsTransaltionsMap[_words[index]]!.length,
                                             itemBuilder:
                                                 (BuildContext context, int subIndex) {
                                               return Row(
@@ -130,20 +114,15 @@ class WordsViewState extends State<WordsView> {
                                                   Expanded(
                                                       child: Padding(
                                                     padding: const EdgeInsets.only(left: 10),
-                                                    child: Text(_wordsTranslationsList[index]
-                                                        .translationList[subIndex]),
+                                                    child: Text(_wordsTransaltionsMap[_words[index]]![subIndex]),
                                                   ))
                                                 ],
                                               );
                                             })
                                       ],
                                     );
-                                  });
-                    } else {
-                      return CircularProgressIndicator();
-                    }
-                  },
-                ),
+                                  }),
+                    
       
                 Form(
                   key: _formKey_for_word,
@@ -154,19 +133,22 @@ class WordsViewState extends State<WordsView> {
                     validator: (text) {
                       if (Validator.checkIsTextIsEmpty(text)) {
                         return 'Поле не должно быть пустым';
-                      } else if (Validator.checkTextLength(text!)){
-                        return 'Допускается только длина ${Config.maxAvailablTextLength} символов';
-                      } else if (widget.vocabulary_type == 'rus_en') {
-                        return Validator.checkLanguage(text!, _latinRegExp)
+                      } 
+                      if (Validator.checkTextLength(text!)){
+                        return 'Допускается только длина ${Config.getMaxAvailablTextLength} символов';
+                      }
+                      if (widget.vocabularyType == 'rus_en') {
+                        return Validator.checkLanguage(text, _latinRegExp)
                             ? 'Не допускается латиница'
                             : null;
-                      } else if (widget.vocabulary_type == 'en_rus') {
-                        return Validator.checkLanguage(text!, _cyrillicRegExp)
+                      }
+                      if (widget.vocabularyType == 'en_rus') {
+                        return Validator.checkLanguage(text, _cyrillicRegExp)
                             ? 'Не допускается кириллица'
                             : null;
-                      } else {
-                        return null;
                       }
+                      return null;
+                      
                     },
                   ),
                 ),
@@ -187,6 +169,14 @@ class WordsViewState extends State<WordsView> {
                             style: const TextStyle(
                                 fontSize: 14, fontWeight: FontWeight.w400),
                           ),
+                          trailing: IconButton(
+                            padding: EdgeInsets.zero,
+                            icon: const Icon(Icons.remove),
+                            onPressed: () {
+                              setState(() {
+                                _currentTranslationListWithDuplicates.removeAt(index);
+                              });
+                            },),
                         );
                       }),
                 Form(
@@ -198,14 +188,14 @@ class WordsViewState extends State<WordsView> {
                       validator: (text) {
                         if (Validator.checkIsTextIsEmpty(text)) {
                           return 'Поле не должно быть пустым';
-                        } else if (Validator.checkTextLength(text!)){
-                        return 'Допускается только длина ${Config.maxAvailablTextLength} символов';
-                        } else if (widget.vocabulary_type == 'en_rus') {
-                          return Validator.checkLanguage(text!, _latinRegExp)
+                        } else if (Validator.checkTranslateLength(text!)){
+                        return 'Допускается только длина ${Config.getMaxAvailableTranslateTextLength} символов';
+                        } else if (widget.vocabularyType == 'en_rus') {
+                          return Validator.checkLanguage(text, _latinRegExp)
                               ? 'Латиница не допускается'
                               : null;
-                        } else if (widget.vocabulary_type == 'rus_en') {
-                          return Validator.checkLanguage(text!, _cyrillicRegExp)
+                        } else if (widget.vocabularyType == 'rus_en') {
+                          return Validator.checkLanguage(text, _cyrillicRegExp)
                               ? 'Кириллица не допускается'
                               : null;
                         } else {
@@ -216,8 +206,8 @@ class WordsViewState extends State<WordsView> {
                 const SizedBox(
                   height: 10,
                 ),
-                if (_currentTranslationList.length <
-                    Config.maxAvailableTranslations - 1)
+                if (_currentTranslationListWithDuplicates.length <
+                    Config.getMaxAvailableTranslations - 1)
                   Align(
                     alignment: Alignment.centerRight,
                     child: TextButton(
@@ -242,45 +232,42 @@ class WordsViewState extends State<WordsView> {
                       if (_formKey_for_word.currentState!.validate() &&
                           _formKey_for_translation.currentState!.validate()) {
                         setState(() {
-                          if (_wordsTranslationsList.length >=
-                              Config.minAvailableWordsInVocabulary - 1) {
+                          if (_wordsTransaltionsMap.length >=
+                              Config.getMinAvailableWordsInVocabulary - 1) {
                             _submit_button_active = true;
+                            if (_wordsTransaltionsMap.length > Config.getMaxAvailableWordsInVocabulary) {
+                              FlushbarView.buildFlushbarWithTitle(context,
+                                    'Допустимо только ${Config.getMaxAvailableWordsInVocabulary} слов в словаре');
+                                    _submit_button_active = false;
+                            }
                           }
-                          _currentTranslationListWithDuplicates.add(
-                              _translation_controller.text.trim().capitalize());
-                          _currentTranslationList = _currentTranslationListWithDuplicates.toSet().toList();
-                              // Оставляем в списке только допустимое количество переводов
-                              Map<String, List<String>> repeatedWords = {};
-                              String? currentRepeatedWord = null;
-                              _wordsTranslationsList.forEach((elem) {
-                                if (elem.word == _word_controller.text.trim().capitalize()){
-                                  print(elem.translationList);
-                                  currentRepeatedWord = elem.word;
-                                  // repeatedWords[elem.word] = elem.translationList;
-                                  repeatedWords.putIfAbsent(elem.word, () => []);
-                                  repeatedWords[elem.word]!.addAll(elem.translationList);
-                                  repeatedWords[elem.word]!.addAll(_currentTranslationList);
-                                  print(repeatedWords);
-                                  if (repeatedWords[elem.word]!.length > Config.maxAvailableTranslations){
-                                    repeatedWords[elem.word]!.removeRange(Config.maxAvailableTranslations,
-                                    repeatedWords[elem.word]!.length);
-                                    FlushbarView.buildFlushbarWithTitle(context, 
-                                    'Допустимо только ${Config.maxAvailableTranslations} переводов');
-                                  } else {
-                                    FlushbarView.buildFlushbarWithTitle(context,
-                                    'Переводы слова ${elem.word} добавлены в список');
-                                  } 
-                                  elem.translationList = repeatedWords[elem.word]!.toSet().toList();                                  
+                          if(_currentTranslationListWithDuplicates.isNotEmpty){
+                            _currentTranslationList.addAll(_currentTranslationListWithDuplicates.toSet().toList());
+                          }                          
+                          if (_translation_controller.text.isNotEmpty){
+                            _currentTranslationList.add(_translation_controller.text.trim().capitalize());
+                          }
+                          String currentWord = _word_controller.text.trim().capitalize();
+                          if (_words.contains(currentWord)){
+                            if (_currentTranslationList.length + _wordsTransaltionsMap[currentWord]!.length <= Config.getMaxAvailableTranslations){
+                              _currentTranslationList.forEach((element) { 
+                                if (!_wordsTransaltionsMap[currentWord]!.contains(element)){
+                                  _wordsTransaltionsMap[currentWord]!.add(element);
                                 }
                               });
-                              if(_word_controller.text.trim().capitalize() != currentRepeatedWord){
-                                _wordsTranslationsList.add(WordTranslation(
-                              word: _word_controller.text.trim().capitalize(),
-                              translationList: List.from(_currentTranslationList),
-                              vocabularyType: widget.vocabulary_type));
-                              }
-                          currentRepeatedWord = null;
-                          repeatedWords.clear();
+                              FlushbarView.buildFlushbarWithTitle(context,
+                                    'Переводы слова ${currentWord} добавлены в список');
+                            } else {
+                              FlushbarView.buildFlushbarWithTitle(context, 
+                                    'Допустимо только ${Config.getMaxAvailableTranslations} переводов');
+                            }
+                          } else {
+                            setState(() {
+                              _words.add(currentWord);
+                              _wordsTransaltionsMap[currentWord] = [];
+                              _wordsTransaltionsMap[currentWord]!.addAll(_currentTranslationList);
+                            });
+                          }
                           _currentTranslationListWithDuplicates.clear();
                           _currentTranslationList.clear();
                           _word_controller.clear();
@@ -288,7 +275,7 @@ class WordsViewState extends State<WordsView> {
                         });
                       }
                     },
-                    child: const Text('Сформировать'))
+                    child: const Text('Сформировать')),
               ]),
             ),
           )),
@@ -297,10 +284,12 @@ class WordsViewState extends State<WordsView> {
         child: ElevatedButton(
           onPressed: _submit_button_active
               ? () async {
-                  await Server.insertWordsTranslations(widget.vocabulary_id,
-                      _wordsTranslationsList, widget.vocabulary_type);
-                  Navigator.push(
-                      context, MaterialPageRoute(builder: (context) => const App()));
+                setState(() {
+                  _submit_button_active = false;
+                });
+                await Api.insertWordsTranslations(widget.vocabularyId, _wordsTransaltionsMap); 
+                Navigator.push(
+                      context, MaterialPageRoute(builder: (context) => App()));
                 }
               : null,
           child: const Text('Сохранить словарь'),

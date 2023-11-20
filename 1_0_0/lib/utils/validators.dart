@@ -9,5 +9,8 @@ class Validator {
     languageRegExp.hasMatch(text) ? true : false;
   
   static bool checkTextLength(String text) =>
-    text.length <= Config.maxAvailablTextLength ? false : true;
+    text.length <= Config.getMaxAvailablTextLength ? false : true;
+  
+  static bool checkTranslateLength(String text) =>
+    text.length <= Config.getMaxAvailableTranslateTextLength ? false : true;
 }

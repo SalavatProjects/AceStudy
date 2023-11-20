@@ -16,14 +16,9 @@ class HomeView extends StatefulWidget {
 class HomeViewState extends State<HomeView> {
   final GlobalKey<ScaffoldState> _key = GlobalKey();
 
-  // PageBloc _pageBloc = PageBloc();
   @override
   void initState() {
     super.initState();
-    // PageBloc().add(PageChangeEvent(page_name: 'main'));
-    // _pageBloc = PageBloc();
-    // _pageBloc.add(PageChangeEvent(page_name: 'main'));
-    // app_page = 'main';
   }
 
   @override
@@ -38,10 +33,11 @@ class HomeViewState extends State<HomeView> {
               'main' : settings_language[app_language]!.main_page_title,
               'vocabularies' : settings_language[app_language]!.vocabularies_page_title,
               'settings' : settings_language[app_language]!.settings_page_title,
+              'train' : 'Тренировка',
               };
             return AppBar(
               title: Text(
-                appbarTitles[Config.app_page]!,
+                appbarTitles[Config.getAppPage]!,
                 style: const TextStyle(
                   color: Colors.white,
                 ),
@@ -65,9 +61,9 @@ class HomeViewState extends State<HomeView> {
       body: BlocBuilder<PageBloc, PageState>(
         builder: (context, state) {
           if (state is PageChanged) {
-            return Config.pages[Config.app_page]!;
+            return Config.getPages[Config.getAppPage]!;
           } else {
-            return Config.pages[Config.app_page]!;
+            return Config.getPages[Config.getAppPage]!;
           }
         },
       ),

@@ -9,13 +9,13 @@ part 'page_state.dart';
 class PageBloc extends Bloc<PageEvent, PageState> {
   PageBloc() : super(PageInitial()) {
     on<PageEvent>((event, emit) {
-      // TODO: implement event handler
+      
 
     });
 
     on<PageChangeEvent>((event, emit) {
 
-      Config.app_page = event.page_name;
+      Config.setPageName = event.page_name;
       emit(PageChanged());
     },);
   }

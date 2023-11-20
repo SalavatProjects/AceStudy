@@ -1,3 +1,4 @@
+import '../functions/from_json.dart';
 import 'translation.dart';
 
 class Word{
@@ -18,16 +19,18 @@ class Word{
       id: json['id'],
       name: json['name'],
       language: json['language'],
-      translations: json['']
+      translations: FromJson.getTranslations(json['translations']),
     );
   }
 
-  /* set setName(String name) => super.name = name;
+  int get getId => id;
+  String get getName => name;
+  String get getLanguage => language;
+  List<Translation> get getTranslations => translations;
 
-  set setFull(Map <String, dynamic> json) {
-    super.id = json['id'];
-    super.name = json['name'];
-    super.language = json['language'];
-    this.translations = json[''];
-  } */
+  @override
+  String toString(){
+    return 'Word: int id: $id, String name: $name, String language: $language, '+
+    'List<Translation> translations $translations';
+  }
 }

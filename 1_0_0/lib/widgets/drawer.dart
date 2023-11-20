@@ -3,12 +3,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../utils/settings.dart';
 import '../blocs/page/page_bloc.dart';
+import '../models/user.dart';
 
 class DrawerView extends StatelessWidget {
   const DrawerView({super.key});
 
   @override
   Widget build(BuildContext context) {
+    User _user = User();
     return Drawer(
       child: SafeArea(child: BlocBuilder<PageBloc, PageState>(
         builder: (context, state) {
@@ -36,7 +38,7 @@ class DrawerView extends StatelessWidget {
                             size: 24,
                           ),
                           Text(
-                            ' {user_name}',
+                            ' ${_user.getName}',
                             style: TextStyle(
                                 color: Colors.blueGrey[800],
                                 fontSize: 16,
@@ -52,7 +54,7 @@ class DrawerView extends StatelessWidget {
                 height: 20,
               ),
               DrawerButtons(
-                button_name: settings_language[app_language]!.main,
+                button_name: 'Профиль',
                 icon: Icons.account_circle,
                 page_name: 'main',
               ),
@@ -67,14 +69,12 @@ class DrawerView extends StatelessWidget {
               const SizedBox(
                 height: 20,
               ),
-              // DrawerButtons(
-              //   button_name: settings_language[app_language]!.my_groups,
-              //   icon: Icons.notes_rounded,
-              //   page_name: 'groups',
-              // ),
-              // SizedBox(
-              //   height: 20,
-              // ),
+              DrawerButtons(button_name: 'Тренировка', 
+              icon: Icons.album_outlined, 
+              page_name: 'train'),
+              const SizedBox(
+                height: 20,
+              ),
               DrawerButtons(button_name: settings_language[app_language]!.settings,
               icon: Icons.settings,
               page_name: 'settings',
