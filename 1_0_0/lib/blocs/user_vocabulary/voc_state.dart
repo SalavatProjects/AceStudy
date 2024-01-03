@@ -8,6 +8,6 @@ class VocPageInitial extends VocPageState {}
 class VocabulariesIsNotReady extends VocPageState {}
 
 class VocabulariesIsReady extends VocPageState{
-  List<Vocabulary>? vocabularies;
+  List<Vocabulary> vocabularies;
   VocabulariesIsReady({required this.vocabularies});
 }

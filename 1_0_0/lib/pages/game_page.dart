@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../models/word.dart';
+import '../models/user.dart';
 import '../utils/validators.dart';
 import '../functions/api.dart';
 import '../functions/modify.dart';
@@ -37,6 +38,7 @@ class _GamePageState extends State<GamePage> {
   List<String> _currentUserTranslations = [];
   Map<String, List<String>> _wordErrors = {};
   List<MaterialColor> _checkAnswerColor = [];
+  User _user = User();
  
 
   @override
@@ -164,13 +166,13 @@ class _GamePageState extends State<GamePage> {
                           setState(() {
                             _isNextButtonIsActive = false;
                           });
-                          if (_wordErrors.isNotEmpty){
-                            await Api.insertInStudentMistakes(
+                          await Api.insertInStudentMistakes(
                           widget.userId, 
                           widget.vocabularyId, 
                           _wordErrors, 
                           widget.attemptNumber);
-                          }
+                          
+                          _user.setVocabulariesCounts(await Api.getUserVocabulariesCounts(_user.getId));
                           Navigator.push(context, 
                           MaterialPageRoute(builder: (BuildContext context) => GameResultPage(
                             totalTranslationsCount: widget.translationsCount, 

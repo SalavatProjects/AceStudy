@@ -1,11 +1,11 @@
-import 'package:ace_study/app.dart';
-import 'package:ace_study/functions/modify.dart';
 import 'package:flutter/material.dart';
 
 import '../config/config.dart';
 import '../utils/validators.dart';
 import '../functions/api.dart';
-
+import '../functions/modify.dart';
+import '../models/user.dart';
+import '../home.dart';
 
 // ignore: must_be_immutable
 class VocabularyView extends StatefulWidget{
@@ -22,8 +22,8 @@ final _formKey = GlobalKey<FormState>();
 TextEditingController _nameVocabularyController = TextEditingController();
 bool _createVocabuluryButtonPressed = false;
 String _vocabularyType = 'en_rus';
-
-  
+User _user = User();
+Config _config = Config();  
 
   @override
   void dispose() {
@@ -69,13 +69,13 @@ String _vocabularyType = 'en_rus';
                 child: TextFormField(
                   controller: _nameVocabularyController,
                   decoration: InputDecoration(
-                    
+                    labelText: 'Название словаря',
                     ),
                     validator: (text) {
                       if(Validator.checkIsTextIsEmpty(text)) {
                     return 'Поле не должно быть пустым';
                   } else if (Validator.checkTextLength(text!)){
-                    return 'Допускается длина только ${Config.getMaxAvailablTextLength} символов';
+                    return 'Допускается длина только ${_config.getMaxAvailablTextLength} символов';
                   } else {
                     return null;
                   }
@@ -110,9 +110,13 @@ String _vocabularyType = 'en_rus';
               setState(() {
                 _createVocabuluryButtonPressed = true;
               });
-              await Api.insertVocabulary(_nameVocabularyController.text.trim().capitalize(), _vocabularyType, 1);
+              await Api.insertVocabulary(_nameVocabularyController.text.trim().capitalize(), 
+              _vocabularyType, 
+              'none',
+              _user.getId);
+              _user.setVocabulariesCounts(await Api.getUserVocabulariesCounts(_user.getId));
               _nameVocabularyController.clear();
-              Navigator.push(context, MaterialPageRoute(builder: (context) => App()));
+              Navigator.push(context, MaterialPageRoute(builder: (context) => HomeView()));
             }
           },
           child: _createVocabuluryButtonPressed ? CircularProgressIndicator()

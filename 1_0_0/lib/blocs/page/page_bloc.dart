@@ -14,8 +14,8 @@ class PageBloc extends Bloc<PageEvent, PageState> {
     });
 
     on<PageChangeEvent>((event, emit) {
-
-      Config.setPageName = event.page_name;
+      Config config = Config();
+      config.setPageName = event.page_name;
       emit(PageChanged());
     },);
   }

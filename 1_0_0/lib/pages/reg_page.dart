@@ -1,7 +1,5 @@
 import 'dart:math';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 import 'package:extended_masked_text/extended_masked_text.dart';
 
 import '../utils/validators.dart' as customValidator;
@@ -37,6 +35,7 @@ class _RegPageState extends State<RegPage> {
   dynamic _loginValidationMsg;
   dynamic _phoneValidationMsg;
   late int _verificationCode;
+  Config _config = Config();
   
 
   Future<dynamic> _checkLogin(login) async {
@@ -53,8 +52,8 @@ class _RegPageState extends State<RegPage> {
       return null;
     }
 
-    if (login!.length < Config.getMinTextLength) {
-      _loginValidationMsg = 'Минимум ${Config.getMinTextLength} символов';
+    if (login!.length < _config.getMinTextLength) {
+      _loginValidationMsg = 'Минимум ${_config.getMinTextLength} символов';
       setState(() {
         
       });
@@ -77,7 +76,7 @@ class _RegPageState extends State<RegPage> {
     });
     await Future.delayed(Duration(milliseconds: 1000));
     
-    if (await Api.checkLoginIsUnique(login)) {
+    if (await Api.checkLoginIsExist(login)) {
       _loginValidationMsg = 'Такой логин уже используется';
     }
     _isLoginChecking = false;
@@ -103,7 +102,7 @@ class _RegPageState extends State<RegPage> {
     });
 
     await Future.delayed(Duration(milliseconds: 1000));
-    if (await Api.checkPhoneIsUnique(phone)) {
+    if (await Api.checkPhoneIsExist(phone)) {
       _phoneValidationMsg = 'Такой номер уже зарегистрирован';
     }
 
@@ -180,7 +179,12 @@ class _RegPageState extends State<RegPage> {
                             Focus(child: TextFormField(
                               decoration: InputDecoration(
                                 labelText: 'Логин',
-                                suffixIcon: _isLoginChecking ? Transform.scale(scale: 0.5, child: CircularProgressIndicator(),) : null),
+                                suffixIcon: _isLoginChecking ? Transform.scale(scale: 0.5, child: CircularProgressIndicator(),) : Tooltip(
+                                  message: 'Ваш уникальный никнейм (не почта!),\nкоторый будет идентифицировать вас\nНапример, SlavaLoveEnglish257',
+                                  triggerMode: TooltipTriggerMode.tap,
+                                  showDuration: Duration(seconds: 5),
+                                  child: Icon(Icons.help_outline)
+                                )),
                                 controller: _loginController,
                                 autovalidateMode: AutovalidateMode.onUserInteraction,
                                 validator: (value) => _loginValidationMsg,
@@ -213,8 +217,8 @@ class _RegPageState extends State<RegPage> {
                       if (customValidator.Validator.checkIsTextIsEmpty(text)){
                         return 'Поле не должно быть пустым';
                       }
-                      if (text!.length < Config.getMinPasswordLength){
-                        return 'Допустимо минимум ${Config.getMinPasswordLength} символов';
+                      if (text!.length < _config.getMinPasswordLength){
+                        return 'Допустимо минимум ${_config.getMinPasswordLength} символов';
                       }
                       return null;
                     },
@@ -265,7 +269,7 @@ class _RegPageState extends State<RegPage> {
                       Map data = {
                         'name' : _nameController.text.trim().capitalize(),
                         'surname': _surnameController.text.trim().capitalize(),
-                        'login': _loginController.text,  
+                        'login': _loginController.text.trim(),  
                         'phone' : _phoneController.unmasked,
                         'password' : _passwordController.text
                       };
@@ -274,7 +278,7 @@ class _RegPageState extends State<RegPage> {
                       Navigator.push(context, 
                       MaterialPageRoute(builder: (context) => CodePage(
                         data: data,
-                        vericationCode: _verificationCode,
+                        verificationCode: _verificationCode,
                         isFromRegPage: true)));
                     }
                   } :

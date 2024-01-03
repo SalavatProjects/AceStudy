@@ -1,5 +1,6 @@
-import 'package:ace_study/app.dart';
 import 'package:flutter/material.dart';
+
+import '../home.dart';
 
 class GameResultPage extends StatefulWidget {
   int totalTranslationsCount;
@@ -24,7 +25,7 @@ class _GameResultPageState extends State<GameResultPage> {
     'Совсем плохо освоен словарь! Попробуйте снова',
     'Не совсем хорошо, лучше немного постараться',
     'Хорошо, но можно лучше',
-    'Словарь отлично освоен, совсем немного до 100%',
+    'Словарь отлично освоен, совсем немного до 100 баллов',
     'Поздравляем! Словарь превосходно освоен на все слова! Так держать!'
   ];
 
@@ -40,9 +41,9 @@ class _GameResultPageState extends State<GameResultPage> {
 
   @override
   Widget build(BuildContext context) {
-    print(_errorTranlationsCount);
-    print(widget.totalTranslationsCount);
-    print(_totalPercent);
+    // print(_errorTranlationsCount);
+    // print(widget.totalTranslationsCount);
+    // print(_totalPercent);
     return Scaffold(
       appBar: AppBar(
         title: Text('Итог'),
@@ -156,7 +157,7 @@ class _GameResultPageState extends State<GameResultPage> {
               padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 48.0),
               child: ElevatedButton(
                 onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => App()));
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => HomeView()));
                 },
                 child: Text('К тренировкам')),
             ),

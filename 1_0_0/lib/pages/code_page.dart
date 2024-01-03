@@ -12,11 +12,11 @@ import '../functions/authorization.dart';
 
 class CodePage extends StatefulWidget {
   Map data;
-  int vericationCode;
+  int verificationCode;
   bool isFromRegPage;
   CodePage({super.key,
   required this.data,
-  required this.vericationCode,
+  required this.verificationCode,
   required this.isFromRegPage});
 
   @override
@@ -55,7 +55,7 @@ class _CodePageState extends State<CodePage> {
   @override
   void initState() {
     super.initState();
-    _verificationCode = widget.vericationCode;
+    _verificationCode = widget.verificationCode;
     _startTimer();
   }
 
@@ -118,12 +118,12 @@ class _CodePageState extends State<CodePage> {
                             widget.data['phone'], 
                             widget.data['password']);
                             await Authorization.login();
-                            await prefs.setInt('userId', await Api.getUserId(widget.data['login']));
+                            await prefs.setInt('userId', await Api.getUserId(widget.data['phone']));
                             Navigator.push(
                         context, MaterialPageRoute(builder: (context) => App()));
                           } else {
                             Navigator.push(
-                        context, MaterialPageRoute(builder: (context) => ChangePasswordPage()));
+                        context, MaterialPageRoute(builder: (context) => ChangePasswordPage(phone: widget.data['phone'],)));
                           }
                         } else {
                           setState(() {

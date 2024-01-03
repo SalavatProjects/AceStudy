@@ -50,31 +50,40 @@ class DrawerView extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(
-                height: 20,
-              ),
               DrawerButtons(
                 button_name: 'Профиль',
                 icon: Icons.account_circle,
-                page_name: 'main',
-              ),
-              const SizedBox(
-                height: 20,
+                page_name: 'profile',
               ),
               DrawerButtons(
                 button_name: settings_language[app_language]!.my_vocabularies,
                 icon: Icons.format_color_text_rounded,
                 page_name: 'vocabularies',
               ),
-              const SizedBox(
-                height: 20,
-              ),
               DrawerButtons(button_name: 'Тренировка', 
               icon: Icons.album_outlined, 
               page_name: 'train'),
-              const SizedBox(
-                height: 20,
+              if (_user.getRoleSlug == 'teacher')
+              DrawerButtons(button_name: 'Группы', 
+              icon: Icons.group, 
+              page_name: 'groups_teacher'),
+              if (_user.getRoleSlug == 'student')
+              DrawerButtons(
+                button_name: 'Группы',
+                icon: Icons.group,
+                page_name: 'groups_student'
               ),
+              if (_user.getRoleSlug == 'student')
+              DrawerButtons(button_name: 'Статистика', 
+              icon: Icons.line_weight, 
+              page_name: 'user_statistics'),
+              if (_user.getRoleSlug == 'teacher')
+              DrawerButtons(button_name: 'Статистика', 
+              icon: Icons.line_weight, 
+              page_name: 'students_statistics'),
+              DrawerButtons(button_name: 'Путеводитель', 
+              icon: Icons.format_list_bulleted, 
+              page_name: 'guide'),
               DrawerButtons(button_name: settings_language[app_language]!.settings,
               icon: Icons.settings,
               page_name: 'settings',
@@ -100,23 +109,39 @@ class DrawerButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 240,
-      height: 50,
-      child: ElevatedButton.icon(
-          onPressed: () {
-            BlocProvider.of<PageBloc>(context)
-                .add(PageChangeEvent(page_name: page_name));
-            Navigator.pop(context);    
-          },
-          icon: Icon(
-            icon,
-            size: 26,
-          ),
-          label: Text(
-            button_name,
-            style: const TextStyle(fontSize: 20),
-          )),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 0.0),
+      child: SizedBox(
+        width: 240,
+        height: 50,
+        child: ElevatedButton(
+            onPressed: () {
+              BlocProvider.of<PageBloc>(context)
+                  .add(PageChangeEvent(page_name: page_name));
+              Navigator.pop(context);    
+            },
+            child: Row(
+              children: <Widget>[
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Icon(icon,
+                  size: 26,),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 10.0),
+                  child: Text(button_name, style: const TextStyle(fontSize: 20),),
+                )
+              ]),
+            /* icon: Icon(
+              icon,
+              size: 26,
+            ),
+            label: Text(
+              button_name,
+              style: const TextStyle(fontSize: 20),
+            ) */
+            ),
+      ),
     );
   }
 }

@@ -1,22 +1,24 @@
-import 'package:ace_study/config/config.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../utils/validators.dart';
+import '../config/config.dart';
 import '../functions/api.dart';
-import '../app.dart';
+import '../home.dart';
 import '../widgets/flushbar.dart';
 import '../functions/modify.dart';
+import '../models/vocabulary.dart';
 
 class WordsView extends StatefulWidget {
-  int vocabularyId;
-  String vocabularyType;
-  Map<String, List<String>> wordsTranslations;
+  /* int vocabularyId;
+  String vocabularyType;*/
+  Map<String, List<String>> wordsTranslations; 
+  Vocabulary vocabulary;
   WordsView({
       super.key, 
-      required this.vocabularyId, 
-      required this.vocabularyType,
-      required this.wordsTranslations,
+      /* required this.vocabularyId, 
+      required this.vocabularyType,*/
+      required this.wordsTranslations, 
+      required this.vocabulary
       });
 
   @override
@@ -26,8 +28,10 @@ class WordsView extends StatefulWidget {
 class WordsViewState extends State<WordsView> {
   final TextEditingController _word_controller = TextEditingController();
   final TextEditingController _translation_controller = TextEditingController();
+  final TextEditingController _vocabularyController = TextEditingController();
   bool _submit_button_active = false;
   final bool _show_add_translation_button = true;
+  final _formKey_for_vocabulary = GlobalKey<FormState>();
   final _formKey_for_word = GlobalKey<FormState>();
   final _formKey_for_translation = GlobalKey<FormState>();
   final RegExp _latinRegExp = RegExp(r'[a-zA-Z]+');
@@ -37,18 +41,21 @@ class WordsViewState extends State<WordsView> {
   List<String> _words = [];
   Map<String, List<String>> _wordsTransaltionsMap = {};
   Map<String, List<String>> testMap = {};
-
+  Config _config = Config();
+  
   @override
   void initState() {
     super.initState();
     _wordsTransaltionsMap = Map.from(widget.wordsTranslations);
     _words = _wordsTransaltionsMap.keys.toList();
+    _vocabularyController.text = widget.vocabulary.getName;
   }
 
   @override
   void dispose() {
     _word_controller.dispose();
     _translation_controller.dispose();
+    _vocabularyController.dispose();
     super.dispose();
   }
 
@@ -65,8 +72,27 @@ class WordsViewState extends State<WordsView> {
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 0.0, horizontal: 16.0),
               child: Column(children: [
+                Form(
+                  key: _formKey_for_vocabulary,
+                  autovalidateMode: AutovalidateMode.disabled,
+                  child: TextFormField(
+                    controller: _vocabularyController,
+                    decoration: InputDecoration(label: Text('Название словаря')),
+                    validator: (text) {
+                      if (Validator.checkIsTextIsEmpty(text)){
+                        return 'Поле не должно быть пустым';
+                      }
+                      return null;  
+                    },
+                    onChanged: (text) {
+                      setState(() {
+                        _submit_button_active = true;
+                      });
+                    },
+                  )),
+                  SizedBox(height: 10,),
                 Text(
-                    'Впишите минимум ${Config.getMinAvailableWordsInVocabulary} слов'),
+                    'Впишите минимум ${_config.getMinAvailableWordsInVocabulary} слов'),
                 // if (_wordsTranslationsList.isNotEmpty)
                     ListView.builder(
                                   physics: const NeverScrollableScrollPhysics(),
@@ -89,8 +115,8 @@ class WordsViewState extends State<WordsView> {
                                                   onPressed: () {
                                                     setState(() {
                                                       if (_words.length <
-                                                          Config.getMinAvailableWordsInVocabulary +
-                                                              1 && _words.length <= Config.getMaxAvailableWordsInVocabulary) {
+                                                          _config.getMinAvailableWordsInVocabulary +
+                                                              1 && _words.length <= _config.getMaxAvailableWordsInVocabulary) {
                                                         _submit_button_active = false;
                                                       } else {
                                                         _submit_button_active = true;
@@ -135,14 +161,14 @@ class WordsViewState extends State<WordsView> {
                         return 'Поле не должно быть пустым';
                       } 
                       if (Validator.checkTextLength(text!)){
-                        return 'Допускается только длина ${Config.getMaxAvailablTextLength} символов';
+                        return 'Допускается только длина ${_config.getMaxAvailablTextLength} символов';
                       }
-                      if (widget.vocabularyType == 'rus_en') {
+                      if (widget.vocabulary.getType == 'rus_en') {
                         return Validator.checkLanguage(text, _latinRegExp)
                             ? 'Не допускается латиница'
                             : null;
                       }
-                      if (widget.vocabularyType == 'en_rus') {
+                      if (widget.vocabulary.getType == 'en_rus') {
                         return Validator.checkLanguage(text, _cyrillicRegExp)
                             ? 'Не допускается кириллица'
                             : null;
@@ -189,12 +215,12 @@ class WordsViewState extends State<WordsView> {
                         if (Validator.checkIsTextIsEmpty(text)) {
                           return 'Поле не должно быть пустым';
                         } else if (Validator.checkTranslateLength(text!)){
-                        return 'Допускается только длина ${Config.getMaxAvailableTranslateTextLength} символов';
-                        } else if (widget.vocabularyType == 'en_rus') {
+                        return 'Допускается только длина ${_config.getMaxAvailableTranslateTextLength} символов';
+                        } else if (widget.vocabulary.getType == 'en_rus') {
                           return Validator.checkLanguage(text, _latinRegExp)
                               ? 'Латиница не допускается'
                               : null;
-                        } else if (widget.vocabularyType == 'rus_en') {
+                        } else if (widget.vocabulary.getType == 'rus_en') {
                           return Validator.checkLanguage(text, _cyrillicRegExp)
                               ? 'Кириллица не допускается'
                               : null;
@@ -207,7 +233,7 @@ class WordsViewState extends State<WordsView> {
                   height: 10,
                 ),
                 if (_currentTranslationListWithDuplicates.length <
-                    Config.getMaxAvailableTranslations - 1)
+                    _config.getMaxAvailableTranslations - 1)
                   Align(
                     alignment: Alignment.centerRight,
                     child: TextButton(
@@ -233,11 +259,11 @@ class WordsViewState extends State<WordsView> {
                           _formKey_for_translation.currentState!.validate()) {
                         setState(() {
                           if (_wordsTransaltionsMap.length >=
-                              Config.getMinAvailableWordsInVocabulary - 1) {
+                              _config.getMinAvailableWordsInVocabulary - 1) {
                             _submit_button_active = true;
-                            if (_wordsTransaltionsMap.length > Config.getMaxAvailableWordsInVocabulary) {
+                            if (_wordsTransaltionsMap.length > _config.getMaxAvailableWordsInVocabulary) {
                               FlushbarView.buildFlushbarWithTitle(context,
-                                    'Допустимо только ${Config.getMaxAvailableWordsInVocabulary} слов в словаре');
+                                    'Допустимо только ${_config.getMaxAvailableWordsInVocabulary} слов в словаре');
                                     _submit_button_active = false;
                             }
                           }
@@ -249,7 +275,7 @@ class WordsViewState extends State<WordsView> {
                           }
                           String currentWord = _word_controller.text.trim().capitalize();
                           if (_words.contains(currentWord)){
-                            if (_currentTranslationList.length + _wordsTransaltionsMap[currentWord]!.length <= Config.getMaxAvailableTranslations){
+                            if (_currentTranslationList.length + _wordsTransaltionsMap[currentWord]!.length <= _config.getMaxAvailableTranslations){
                               _currentTranslationList.forEach((element) { 
                                 if (!_wordsTransaltionsMap[currentWord]!.contains(element)){
                                   _wordsTransaltionsMap[currentWord]!.add(element);
@@ -259,7 +285,7 @@ class WordsViewState extends State<WordsView> {
                                     'Переводы слова ${currentWord} добавлены в список');
                             } else {
                               FlushbarView.buildFlushbarWithTitle(context, 
-                                    'Допустимо только ${Config.getMaxAvailableTranslations} переводов');
+                                    'Допустимо только ${_config.getMaxAvailableTranslations} переводов');
                             }
                           } else {
                             setState(() {
@@ -284,12 +310,17 @@ class WordsViewState extends State<WordsView> {
         child: ElevatedButton(
           onPressed: _submit_button_active
               ? () async {
-                setState(() {
+                if (_formKey_for_vocabulary.currentState!.validate()){
+                  setState(() {
                   _submit_button_active = false;
                 });
-                await Api.insertWordsTranslations(widget.vocabularyId, _wordsTransaltionsMap); 
+                await Api.insertWordsTranslations(
+                  widget.vocabulary.getId, 
+                  _vocabularyController.text, 
+                  _wordsTransaltionsMap); 
                 Navigator.push(
-                      context, MaterialPageRoute(builder: (context) => App()));
+                      context, MaterialPageRoute(builder: (context) => HomeView()));
+                }   
                 }
               : null,
           child: const Text('Сохранить словарь'),

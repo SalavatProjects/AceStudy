@@ -1,11 +1,10 @@
 import 'word.dart';
 import '../functions/from_json.dart';
-import '../config/config.dart';
 
 class Vocabulary{
   int id;
   String name;
-  String? icon;
+  String icon;
   String typeSlug;
   String type;
   int wordsCount;
@@ -48,17 +47,17 @@ class Vocabulary{
 
   int get getId => id;
   String get getName => name;
-  String? get getIcon => icon;
+  String get getIcon => icon;
   String get getTypeSlug => typeSlug;
   String get getType => type;
   int get getWordsCount => wordsCount;
   List<Word> get getWords => words;
   int get getAttemptNumber => attemptNumber;
-  int get getTranslationsCOunt => translationsCount;
+  int get getTranslationsCount => translationsCount;
   
   @override
   String toString() {
-    return 'Vocabulary: int id $id, String name $name, String? icon $icon, String type $type, int words_count $wordsCount, '+
+    return 'Vocabulary: int id $id, String name $name, String icon $icon, String type $type, int words_count $wordsCount, '+
     'int attemptNumber $attemptNumber, int translationsCount $translationsCount, List<Word> words $words;';
   }
 

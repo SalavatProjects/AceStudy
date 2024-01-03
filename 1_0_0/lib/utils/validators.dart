@@ -1,7 +1,8 @@
 import '../config/config.dart';
 
 class Validator {
-  
+  static Config _config = Config();
+
   static bool checkIsTextIsEmpty(String? text) =>
     (text == null || text.isEmpty) ? true : false;
 
@@ -9,8 +10,8 @@ class Validator {
     languageRegExp.hasMatch(text) ? true : false;
   
   static bool checkTextLength(String text) =>
-    text.length <= Config.getMaxAvailablTextLength ? false : true;
+    text.length <= _config.getMaxAvailablTextLength ? false : true;
   
   static bool checkTranslateLength(String text) =>
-    text.length <= Config.getMaxAvailableTranslateTextLength ? false : true;
+    text.length <= _config.getMaxAvailableTranslateTextLength ? false : true;
 }

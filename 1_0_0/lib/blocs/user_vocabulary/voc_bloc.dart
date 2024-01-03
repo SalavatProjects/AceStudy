@@ -5,6 +5,7 @@ import 'package:meta/meta.dart';
 import '../../functions/api.dart';
 import '../../functions/from_json.dart';
 import '../../models/vocabulary.dart';
+import '../../models/user.dart';
 
 part 'voc_event.dart';
 part 'voc_state.dart';
@@ -17,7 +18,9 @@ class VocPageBloc extends Bloc<VocPageEvent, VocPageState> {
 
     on<VocabulariesGettingReadyEvent>((event, emit) async {
       emit(VocabulariesIsNotReady());
-      List<Vocabulary>? vocs = FromJson.getUserVocabularies(await Api.getJsonUserVocabulariesWords(1));
+      User user = User();
+      List<Vocabulary> vocs = FromJson.getVocabularies(await Api.getJsonUserVocabulariesWords(user.getId));
+      // print(vocs);
       // Logger().t(vocs);
       return emit(VocabulariesIsReady(vocabularies: vocs));
     });

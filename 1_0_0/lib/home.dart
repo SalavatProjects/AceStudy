@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'config/config.dart';
 import 'widgets/drawer.dart';
 import 'blocs/page/page_bloc.dart';
 import 'utils/settings.dart';
+import '../models/user.dart';
+import '../functions/api.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -15,10 +18,30 @@ class HomeView extends StatefulWidget {
 
 class HomeViewState extends State<HomeView> {
   final GlobalKey<ScaffoldState> _key = GlobalKey();
+  User _user = User();
+  Config _config = Config();
 
   @override
   void initState() {
     super.initState();
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      if (_user.getIsUpdateAvailable) {
+      showDialog<String>(context: context, 
+                    builder: (BuildContext context) => AlertDialog(
+                      title: Text('Внимание'),
+                      content: Text('На приложение вышло обновление, не забудьте его обновить, чтобы получить доступ к новым функциям и возможностям!'),
+                      actions: <Widget>[
+                        TextButton(onPressed: () async {
+                          await Api.setUpdateToFalse(_user.getId);
+                          _user.setIsUpadateAvailable = false;
+                          Navigator.pop(context);
+                        }, 
+                        child: Text('Ок')),
+                      ],
+                    ));
+    }
+    });
+    
   }
 
   @override
@@ -34,10 +57,15 @@ class HomeViewState extends State<HomeView> {
               'vocabularies' : settings_language[app_language]!.vocabularies_page_title,
               'settings' : settings_language[app_language]!.settings_page_title,
               'train' : 'Тренировка',
+              'profile' : 'Профиль',
+              'user_statistics' : 'Статистика пользователя',
+              'guide' : 'Путеводитель',
+              'groups_teacher' : 'Группы',
+              'groups_student' : 'Группы',
               };
             return AppBar(
               title: Text(
-                appbarTitles[Config.getAppPage]!,
+                appbarTitles[_config.getAppPage]!,
                 style: const TextStyle(
                   color: Colors.white,
                 ),
@@ -61,9 +89,9 @@ class HomeViewState extends State<HomeView> {
       body: BlocBuilder<PageBloc, PageState>(
         builder: (context, state) {
           if (state is PageChanged) {
-            return Config.getPages[Config.getAppPage]!;
+            return _config.getPages[_config.getAppPage]!;
           } else {
-            return Config.getPages[Config.getAppPage]!;
+            return _config.getPages[_config.getAppPage]!;
           }
         },
       ),

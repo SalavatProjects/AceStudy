@@ -1,17 +1,14 @@
 import '../models/vocabulary.dart';
 import '../models/word.dart';
 import '../models/translation.dart';
+import '../models/mistake_statistics.dart';
+import '../models/group.dart';
+import '../models/group_member.dart';
 
 class FromJson {
 
-  static List<Vocabulary>? getUserVocabularies(List? vocabulariesList){
-    if (vocabulariesList != null)
-    {
-      return vocabulariesList.map((e) => Vocabulary.fromJson(e['dictionary'])).toList();
-    } else {
-      return null;
-    }
-    
+  static List<Vocabulary> getVocabularies(List vocabulariesList){
+    return vocabulariesList.map((e) => Vocabulary.fromJson(e['dictionary'])).toList();
   }
 
   static List<Word> getWords(List wordsList){
@@ -22,4 +19,30 @@ class FromJson {
     return translationsList.map((e) => Translation.fromJson(e['translation'])).toList();
   }
 
+  static List<Map<String, dynamic>> getVocabulariesMistakeStatistic(List statistics){
+    List<Map<String, dynamic>> result = [];
+    statistics.forEach((element) {
+      
+      int userId = element['user_id']; 
+      Vocabulary voc = Vocabulary.fromJson(element['dictionary']);
+      List<MistakeStatistics> mistakeStatisticsList = [];
+      element['attempts'].forEach((attempt) {
+        mistakeStatisticsList.add(MistakeStatistics.fromJson(attempt));
+      });
+      result.add({
+        'user_id' : userId,
+        'vocabulary': voc,
+        'mistake_statistics' : mistakeStatisticsList
+        });
+    });
+    return result;
+  }
+
+  static List<Group> getGroups(List groupsList) {
+    return groupsList.map((e) => Group.fromJson(e)).toList();
+  } 
+
+  static List<GroupMember> getParticipants(List participantsList) {
+    return participantsList.map((e) => GroupMember.fromJson(e)).toList();
+  }
 }
