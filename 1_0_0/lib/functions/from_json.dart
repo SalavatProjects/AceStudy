@@ -1,7 +1,7 @@
 import '../models/vocabulary.dart';
 import '../models/word.dart';
 import '../models/translation.dart';
-import '../models/mistake_statistics.dart';
+import '../models/user_mistake_statistics.dart';
 import '../models/group.dart';
 import '../models/group_member.dart';
 
@@ -25,9 +25,9 @@ class FromJson {
       
       int userId = element['user_id']; 
       Vocabulary voc = Vocabulary.fromJson(element['dictionary']);
-      List<MistakeStatistics> mistakeStatisticsList = [];
+      List<UserMistakeStatistics> mistakeStatisticsList = [];
       element['attempts'].forEach((attempt) {
-        mistakeStatisticsList.add(MistakeStatistics.fromJson(attempt));
+        mistakeStatisticsList.add(UserMistakeStatistics.fromJson(attempt));
       });
       result.add({
         'user_id' : userId,
@@ -45,4 +45,5 @@ class FromJson {
   static List<GroupMember> getParticipants(List participantsList) {
     return participantsList.map((e) => GroupMember.fromJson(e)).toList();
   }
+  
 }

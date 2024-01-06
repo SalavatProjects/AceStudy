@@ -64,13 +64,17 @@ class Api{
     await httpClientApi.postWithoutReturnData();
   }
 
-  static Future<void> insertInStudentMistakes(int userId, int vocabularyId, Map<String, List<String>>? wordErrors, int attemptNumber) async{
+  static Future<void> insertInStudentMistakes(int userId, 
+  int vocabularyId, 
+  Map<String, List<String>>? wordErrors, 
+  Map<String, int> usersAttemptNumber
+  ) async{
     HttpClientApi httpClientApi = HttpClientApi(url: 'insert_in_student_mistakes');
     httpClientApi.setBodyMap = {
       'user_id': userId,
       'vocabulary_id': vocabularyId,
       'word_errors': wordErrors,
-      'attempt_number': attemptNumber
+      'users_attempt_number': usersAttemptNumber
     };
     await httpClientApi.postWithoutReturnData();
   }
@@ -249,4 +253,11 @@ class Api{
     await httpClientApi.postWithoutReturnData();
   }
   
+  static Future getUserGroups(int userId) async {
+    HttpClientApi httpClientApi = HttpClientApi(url: 'get_user_groups');
+    httpClientApi.setBodyMap = {
+      'user_id': userId
+    };
+    return await httpClientApi.postWithReturnData();
+  }
 }

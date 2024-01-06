@@ -11,14 +11,14 @@ class GamePage extends StatefulWidget {
   int userId;
   int vocabularyId;
   int translationsCount;
-  int attemptNumber;
+  Map<String, int> usersAttemptNumber;
   List<Word> words;
   GamePage({
     super.key,
     required this.userId,
     required this.vocabularyId,
     required this.translationsCount,
-    required this.attemptNumber,
+    required this.usersAttemptNumber,
     required this.words});
 
   @override
@@ -153,87 +153,103 @@ class _GamePageState extends State<GamePage> {
                       ),
                     ),
                     
-                      _isNextPageButton ? ElevatedButton(onPressed: _isNextButtonIsActive ? () async {
-                        if (_currentTranslations.isNotEmpty)
-                        {
-                          _wordErrors[widget.words[pageIndex].getName] = List.from(_currentTranslations);
-                        }
-                        if (pageIndex < widget.words.length - 1)
-                        {
-                            _pageController.nextPage(duration: const Duration(milliseconds: 500), 
-                            curve: Curves.easeInOut);
-                        } else {
-                          setState(() {
-                            _isNextButtonIsActive = false;
-                          });
-                          await Api.insertInStudentMistakes(
-                          widget.userId, 
-                          widget.vocabularyId, 
-                          _wordErrors, 
-                          widget.attemptNumber);
+                      _isNextPageButton ? Padding(
+                        padding: const EdgeInsets.only(top: 8.0),
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            minimumSize: Size(160, 50)
+                          ),
+                          onPressed: _isNextButtonIsActive ? () async {
+                          if (_currentTranslations.isNotEmpty)
+                          {
+                            _wordErrors[widget.words[pageIndex].getName] = List.from(_currentTranslations);
+                          }
+                          if (pageIndex < widget.words.length - 1)
+                          {
+                              _pageController.nextPage(duration: const Duration(milliseconds: 500), 
+                              curve: Curves.easeInOut);
+                          } else {
+                            setState(() {
+                              _isNextButtonIsActive = false;
+                            });
+                            // print(widget.usersAttemptNumber);
+                            await Api.insertInStudentMistakes(
+                            widget.userId, 
+                            widget.vocabularyId, 
+                            _wordErrors, 
+                            widget.usersAttemptNumber
+                            );
+                            
+                            _user.setVocabulariesCounts(await Api.getUserVocabulariesCounts(_user.getId));
+                            Navigator.push(context, 
+                            MaterialPageRoute(builder: (BuildContext context) => GameResultPage(
+                              totalTranslationsCount: widget.translationsCount, 
+                              usersAttemptNumber: widget.usersAttemptNumber, 
+                              wordErrors: _wordErrors)));
+                          }
                           
-                          _user.setVocabulariesCounts(await Api.getUserVocabulariesCounts(_user.getId));
-                          Navigator.push(context, 
-                          MaterialPageRoute(builder: (BuildContext context) => GameResultPage(
-                            totalTranslationsCount: widget.translationsCount, 
-                            attemptNumber: widget.attemptNumber, 
-                            wordErrors: _wordErrors)));
-                        }
-                        
-                      _translateController.clear();
-                      _currentUserTranslations.clear();
-                      _currentTranslations.clear();
-                      _checkAnswerColor.clear();
-                      _isNextPageButton = false;
-                      _isFillTranslateList = true;
-                      // print(_currentTranslations);
-                      // print(_wordErrors);
-                      } : null, 
-                      child: Text('Далее')) :
-                  ElevatedButton(onPressed: () {
-                    if (_formKeys[pageIndex].currentState!.validate()) {
-                      String enteredWord = _translateController.text.trim().capitalize();
-                      _isFillTranslateList = false;
-                      if(_currentUserTranslations.length < widget.words[pageIndex].getTranslations.length - 1){
-                        if (_currentTranslations.contains(enteredWord)){
-                          _checkAnswerColor.add(Colors.green);
-                          _totalScore++;
-                          _currentTranslations.removeWhere((element) => element == enteredWord);
-                          setState(() {
-                            _currentUserTranslations.add(enteredWord);
-                          });  
-                        } else {
-                          _checkAnswerColor.add(Colors.red);
-                          setState(() {
-                            _currentUserTranslations.add(enteredWord);
-                          });
-                        }
                         _translateController.clear();
-                      } else {
-                        if (_currentTranslations.contains(enteredWord)){
-                          _checkAnswerColor.add(Colors.green);
-                          _totalScore++;
-                          _currentTranslations.removeWhere((element) => element == enteredWord);
-                          setState(() {
-                            _currentUserTranslations.add(enteredWord);
-                          });  
+                        _currentUserTranslations.clear();
+                        _currentTranslations.clear();
+                        _checkAnswerColor.clear();
+                        _isNextPageButton = false;
+                        _isFillTranslateList = true;
+                        // print(_currentTranslations);
+                        // print(_wordErrors);
+                        } : null, 
+                        child: Text('Далее', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),)),
+                      ) :
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: Size(160, 50),
+                      ),
+                      onPressed: () {
+                      if (_formKeys[pageIndex].currentState!.validate()) {
+                        String enteredWord = _translateController.text.trim().capitalize();
+                        _isFillTranslateList = false;
+                        if(_currentUserTranslations.length < widget.words[pageIndex].getTranslations.length - 1){
+                          if (_currentTranslations.contains(enteredWord)){
+                            _checkAnswerColor.add(Colors.green);
+                            _totalScore++;
+                            _currentTranslations.removeWhere((element) => element == enteredWord);
+                            setState(() {
+                              _currentUserTranslations.add(enteredWord);
+                            });  
+                          } else {
+                            _checkAnswerColor.add(Colors.red);
+                            setState(() {
+                              _currentUserTranslations.add(enteredWord);
+                            });
+                          }
+                          _translateController.clear();
                         } else {
-                          _checkAnswerColor.add(Colors.red);
+                          if (_currentTranslations.contains(enteredWord)){
+                            _checkAnswerColor.add(Colors.green);
+                            _totalScore++;
+                            _currentTranslations.removeWhere((element) => element == enteredWord);
+                            setState(() {
+                              _currentUserTranslations.add(enteredWord);
+                            });  
+                          } else {
+                            _checkAnswerColor.add(Colors.red);
+                            setState(() {
+                              _currentUserTranslations.add(enteredWord);
+                            });
+                          }
+                          _translateController.clear();
                           setState(() {
-                            _currentUserTranslations.add(enteredWord);
+                            _isNextPageButton = true;
                           });
+                       
                         }
-                        _translateController.clear();
-                        setState(() {
-                          _isNextPageButton = true;
-                        });
-                     
+                        // print(_currentTranslations);
                       }
-                      // print(_currentTranslations);
-                    }
-                      
-                  }, 
-                  child: Text('Ввод')),
+                        
+                    }, 
+                    child: Text('Ввод', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),)),
+                  ),
                   ],),
               ),
             );

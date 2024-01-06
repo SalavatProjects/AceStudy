@@ -1,21 +1,24 @@
 import 'word.dart';
 import '../functions/from_json.dart';
 
-class MistakeStatistics{
+class UserMistakeStatistics{
+  int userId;
   int attemptNumber;
   int vocabularyId;
   int mistakesCount;
   List<Word>? words;
   
-  MistakeStatistics({
+  UserMistakeStatistics({
+    required this.userId,
     required this.attemptNumber,
     required this.vocabularyId,
     required this.mistakesCount,
     required this.words,
   });
   
-  factory MistakeStatistics.fromJson(Map<String, dynamic> json){
-    return MistakeStatistics(
+  factory UserMistakeStatistics.fromJson(Map<String, dynamic> json){
+    return UserMistakeStatistics(
+      userId: json['user_id'],
       attemptNumber: json['attempt_number'], 
       mistakesCount: json['mistakes_count'],
       vocabularyId: json['dictionary_id'],
@@ -23,6 +26,7 @@ class MistakeStatistics{
       );
   }
 
+  int get getUserId => userId;
   int get getAttemptNumber => attemptNumber;
   int get getVocabularyId => vocabularyId;
   int get getMistakesCount => mistakesCount;
@@ -31,6 +35,6 @@ class MistakeStatistics{
 
   @override
   String toString() {
-    return 'MistakeStatistics: int attmeptNumber $attemptNumber, int vocabularyId $vocabularyId, int mistakesCount $mistakesCount, List<Word>? words $words';
+    return 'UserMistakeStatistics: int userId $userId, int attmeptNumber $attemptNumber, int vocabularyId $vocabularyId, int mistakesCount $mistakesCount, List<Word>? words $words';
   }
 }

@@ -64,7 +64,7 @@ class _UserStatisticsPageState extends State<UserStatisticsPage> {
                                   leading: Icon(Icons.book_outlined),
                                   title: Text('Словарь: ${_statistics[statistic_index]['vocabulary'].getName}',
                                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500, color: Colors.grey.shade800),),
-                                  subtitle: Text('Тренировался ${_statistics[statistic_index]['vocabulary'].getAttemptNumber} раз'),
+                                  subtitle: Text('Тренировался ${_statistics[statistic_index]['vocabulary'].getUsersAttemptNumber[userId]} раз'),
                                   ),
                                   Divider(thickness: 1,),
                                   ListView.builder(

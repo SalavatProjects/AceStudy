@@ -4,12 +4,12 @@ import '../home.dart';
 
 class GameResultPage extends StatefulWidget {
   int totalTranslationsCount;
-  int attemptNumber;
+  Map<String, int> usersAttemptNumber;
   Map wordErrors;
   GameResultPage({
     super.key,
     required this.totalTranslationsCount,
-    required this.attemptNumber,
+    required this.usersAttemptNumber,
     required this.wordErrors});
 
   @override

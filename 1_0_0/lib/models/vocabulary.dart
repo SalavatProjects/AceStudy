@@ -1,5 +1,6 @@
 import 'word.dart';
 import '../functions/from_json.dart';
+import '../functions/modify.dart';
 
 class Vocabulary{
   int id;
@@ -9,7 +10,8 @@ class Vocabulary{
   String type;
   int wordsCount;
   List<Word> words;
-  int attemptNumber;
+  // Map<String (userId), int (attemptNumber)> usersAttemptNumber
+  Map<String, int> usersAttemptNumber;
   int translationsCount;
   Vocabulary({
     required this.id,
@@ -19,7 +21,7 @@ class Vocabulary{
     required this.type,
     required this.wordsCount,
     required this.words,
-    required this.attemptNumber,
+    required this.usersAttemptNumber,
     required this.translationsCount,
   });
   factory Vocabulary.fromJson(Map<String, dynamic> json) {
@@ -40,7 +42,7 @@ class Vocabulary{
     type: currentType,
     wordsCount: json['words_count'],
     words: FromJson.getWords(json['words']),
-    attemptNumber: json['attempt_number'],
+    usersAttemptNumber: convertToIntMap(json['users_attempt_number']),
     translationsCount: json['translations_count']
     );
   }
@@ -52,13 +54,13 @@ class Vocabulary{
   String get getType => type;
   int get getWordsCount => wordsCount;
   List<Word> get getWords => words;
-  int get getAttemptNumber => attemptNumber;
+  Map<String, int> get getUsersAttemptNumber => usersAttemptNumber;
   int get getTranslationsCount => translationsCount;
   
   @override
   String toString() {
     return 'Vocabulary: int id $id, String name $name, String icon $icon, String type $type, int words_count $wordsCount, '+
-    'int attemptNumber $attemptNumber, int translationsCount $translationsCount, List<Word> words $words;';
+    'Map<String, int> usersAttemptNumber $usersAttemptNumber, int translationsCount $translationsCount, List<Word> words $words;';
   }
 
   

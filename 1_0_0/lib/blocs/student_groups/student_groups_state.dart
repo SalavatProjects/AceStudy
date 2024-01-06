@@ -7,4 +7,7 @@ final class StudentGroupsInitial extends StudentGroupsState {}
 
 final class StudentGroupsIsNotReady extends StudentGroupsState {}
 
-final class StudentGroupsIsReady extends StudentGroupsState {}
+final class StudentGroupsIsReady extends StudentGroupsState {
+  List<Group> groups;
+  StudentGroupsIsReady({required this.groups});
+}

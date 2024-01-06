@@ -122,7 +122,8 @@ class _TeacherGroupsState extends State<TeacherGroups> {
                     );
                   })
                 :
-                Text('У Вас ещё нет ни одной группы') 
+                Text('У Вас ещё нет ни одной группы!',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600, color: Colors.grey.shade500),) 
                   ]),),
             );
           } else {

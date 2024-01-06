@@ -4,7 +4,7 @@ import 'package:meta/meta.dart';
 import '../../functions/from_json.dart';
 import '../../functions/api.dart';
 import '../../models/vocabulary.dart';
-import '../../models/mistake_statistics.dart';
+import '../../models/user_mistake_statistics.dart';
 import '../../models/user.dart';
 
 part 'user_statistics_event.dart';
@@ -19,8 +19,10 @@ class UserStatisticsBloc extends Bloc<UserStatisticsEvent, UserStatisticsState> 
     on<UserStatisticsGettingReadyEvent>((event, emit) async {
       emit(UserStatisticsIsNotReady()); 
       User user = User();
+      // List<Map<String, dynamic>> statistics = [];
       List<Map<String, dynamic>> statistics = FromJson.getVocabulariesMistakeStatistic(await Api.getUserMistakesStatistics(user.getId));
       // print(statistics[0]['mistake_statistics']);
+      // print((await Api.getUserMistakesStatistics(user.getId))[0]['attempts']);
       emit(UserStatisticsIsReady(statistics: statistics));
     },
     );
