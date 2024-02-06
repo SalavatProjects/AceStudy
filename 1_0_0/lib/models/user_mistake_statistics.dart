@@ -35,6 +35,6 @@ class UserMistakeStatistics{
 
   @override
   String toString() {
-    return 'UserMistakeStatistics: int userId $userId, int attmeptNumber $attemptNumber, int vocabularyId $vocabularyId, int mistakesCount $mistakesCount, List<Word>? words $words';
+    return 'UserMistakeStatistics: int userId $userId, int attemptNumber $attemptNumber, int vocabularyId $vocabularyId, int mistakesCount $mistakesCount, List<Word>? words $words';
   }
 }

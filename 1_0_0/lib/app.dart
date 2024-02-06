@@ -3,12 +3,15 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:io';
+import 'dart:convert';
+
 
 import 'home.dart';
-import 'pages/login_page.dart';
+import 'pages/auth_reg/login_page.dart';
 import 'functions/authorization.dart';
 import 'models/user.dart';
 import 'config/config.dart';
+import 'config/constants.dart';
 import 'functions/api.dart';
 import 'blocs/page/page_bloc.dart';
 import 'blocs/user_vocabulary/voc_bloc.dart';
@@ -18,6 +21,8 @@ import 'blocs/teacher_groups/teacher_groups_bloc.dart';
 import 'blocs/group_participants/group_participants_bloc.dart';
 import 'blocs/group_vocabularies/group_vocabularies_bloc.dart';
 import 'blocs/student_groups/student_groups_bloc.dart';
+import 'blocs/student_statistics_by_vocabulary/students_statistics_by_vocabulary_bloc.dart';
+import 'blocs/student_group_statistic/student_group_statistic_bloc.dart';
 
 class App extends StatefulWidget {
   App({super.key});
@@ -29,18 +34,58 @@ class App extends StatefulWidget {
 class AppState extends State<App>{
   User _user = User();
   Config _config = Config();
+  
 
   Future<bool> _checkLogin() async {
-    await Future.delayed(Duration(seconds: 3));
+    // await Future.delayed(Duration(seconds: 3));
     _config.getConfigFromJson(await Api.getJsonConfig());
     // _config.printConfig();
+
+    // var client = HttpClient();
+    // HttpClientRequest request = await client.get('http://studyenglish/api/v1/get_user_data?user_id=5', 80, '/');
+    /* HttpClientRequest request = await client.getUrl(Uri(
+        scheme: 'http',
+        host: '10.0.2.2',
+        port: 80,
+        path: "api/v1/get_user_data",
+        query: 'user_id=5')); */
+        /* request.headers.add(HttpHeaders.contentTypeHeader, 'application/json');
+
+        HttpClientResponse response = await request.close();
+        var responseBody = await response.transform(utf8.decoder).join();
+        var jsonData = jsonDecode(responseBody);*/
+        /* print(Uri(
+        scheme: 'http',
+        host: '10.0.2.2',
+        port: 80,
+        path: "api/v1/get_user_data",
+        query: 'user_id=5')); */
+        // print(jsonData); 
+        
+  /* var response = await http.post(Uri.parse('http://5.35.16.108/api/v1/get_guide'));
+  print(response.body); */
+
+      // print(await Api.getJsonUserData(5));
       if (await Authorization.isLoggedIn()){
         SharedPreferences prefs = await SharedPreferences.getInstance();
+        // print(prefs.getInt('userId'));
         if (prefs.getInt('userId') == null){
           return false;
         } else {
+          // print('qwer');
+          if (!await Api.checkIfUserExist(prefs.getInt('userId')!))
+          {
+            await prefs.remove('userId');
+            return false;
+          }
+        
           await Api.checkUserRoleTime(prefs.getInt('userId')!);
+          // print('hi');
           _user.getUserDataFromJson(await Api.getJsonUserData(prefs.getInt('userId')!));
+          if (Constants.getAppVersion != _user.getAppVersion)
+          {
+            await Api.setUserAppVesrion(_user.getId, Constants.getAppVersion);
+          }
           if (Platform.isAndroid){
             await Api.checkUserSmartphoneType(prefs.getInt('userId')!, 'Android');
           } else if (Platform.isIOS){
@@ -89,8 +134,17 @@ class AppState extends State<App>{
         BlocProvider(
           lazy: false,
           create: (context) => StudentGroupsBloc()),
+        BlocProvider(
+          lazy: false,
+          create: (context) => StudentsStatisticsByVocabularyBloc()),
+        BlocProvider(
+          lazy: false,
+          create: (context) => StudentGroupStatisticBloc())
       ],
       child: MaterialApp(
+        routes: {
+          '/home' :(context) => HomeView()
+        },
         home: Scaffold(
           body: FutureBuilder(
             future: _checkLogin(),
@@ -103,7 +157,7 @@ class AppState extends State<App>{
                   return LoginPage();
                 }
               } else {
-                return Center(child: Text('Приветствие'));
+                return Center(child: Text('AceStudy'));
               }
             },
           ), 

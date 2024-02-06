@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import '../models/vocabulary.dart';
-import '../pages/game_page.dart';
+import '../pages/train/game_page.dart';
 
 class Train extends StatefulWidget {
   List<Vocabulary> vocabularies;
   int userId;
-
+  int? groupId;
   Train({super.key,
   required this.vocabularies,
-  required this.userId});
+  required this.userId,
+  required this.groupId});
 
   @override
   _TrainState createState() => _TrainState();
@@ -53,7 +54,7 @@ class _TrainState extends State<Train> {
                                           child: const Icon(Icons.ac_unit),
                                         ),
                             title: Text(widget.vocabularies[i].getName),
-                            subtitle: Text('Кол-во слов: ${widget.vocabularies[i].getWordsCount}'),
+                            subtitle: Text('${widget.vocabularies[i].getType} Кол-во слов: ${widget.vocabularies[i].getWordsCount}'),
                           );
                           // Text(_vocabularies![i].getName);
                         }, 
@@ -100,6 +101,7 @@ class _TrainState extends State<Train> {
                                   MaterialPageRoute(builder: (context) => GamePage(
                                     userId: widget.userId,
                                     vocabularyId: widget.vocabularies[i].getId,
+                                    groupId: widget.groupId,
                                     translationsCount: widget.vocabularies[i].getTranslationsCount,
                                     usersAttemptNumber: widget.vocabularies[i].getUsersAttemptNumber, 
                                     words: widget.vocabularies[i].getWords)));

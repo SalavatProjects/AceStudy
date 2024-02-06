@@ -14,7 +14,9 @@ class FlushbarView{
       ),
       margin: EdgeInsets.all(8.0),
       borderRadius: BorderRadius.circular(8.0),
-      duration: Duration(seconds: 3),
+      duration: Duration(seconds: 2),
+      animationDuration: Duration(milliseconds: 300),
+      isDismissible: true,
       flushbarPosition: FlushbarPosition.TOP,
     )..show(context);
   }

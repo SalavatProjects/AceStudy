@@ -1,28 +1,36 @@
+// word length 17 symbols
+
 import 'package:flutter/material.dart';
 
 import '../pages/main_page.dart';
-import '../pages/vocabularies_page.dart';
-import '../pages/settings_page.dart';
-import '../pages/train_page.dart';
-import '../pages/profile_page.dart';
-import '../pages/user_statistics_page.dart';
-import '../pages/guide_page.dart';
-import '../pages/teacher_groups.dart';
-import '../pages/student_groups.dart';
+import '../pages/vocabularies/vocabularies_page.dart';
+import '../pages/settings/settings_page.dart';
+import '../pages/train/train_page.dart';
+import '../pages/profile/profile_page.dart';
+import '../pages/statistics/user_statistics_page.dart';
+import '../pages/guide/guide_page.dart';
+import '../pages/groups/teacher/teacher_groups.dart';
+import '../pages/groups/student/student_groups_page.dart';
+import '../pages/statistics/teacher/students_groups_statistics.dart';
 
 class Config {
   
   static String _app_page = 'train';
+  static String _countryCode = '7';
 
   late final int _minAvailableWordsInVocabulary;
   late final int _maxAvailableTranslations;
-  late final int _maxAvailablTextLength;
-  late final int _maxAvailableTranslateTextLength;
+  late final int _maxAvailablWordLength;
+  late final int _maxAvailableTranslateWordLength;
+  late final int _maxAvailableTranslatePhraseLength;
+  late final int _maxAvailableTranslateLongPhraseLength;
   late final int _maxAvailableWordsInVocabulary;
+  late final int _maxTextLength;
   late final int _minTextLength;
   late final int _minPasswordLength;
   late final int _price;
 
+  
   final Map <String, Widget> _pages = {
   'main' : MainView(),
   'vocabularies' : VocabulariesView(),
@@ -32,7 +40,8 @@ class Config {
   'user_statistics' : UserStatisticsPage(),
   'guide' : GuidePage(),
   'groups_teacher' : TeacherGroups(),
-  'groups_student' : StudentGroups(),
+  'groups_student' : StudentGroupsPage(),
+  'students_statistics' : StudentsGroupsStatistics(),
   };
   final List<String> _pagesName = [
     'main',
@@ -44,6 +53,7 @@ class Config {
     'guide',
     'groups_teacher',
     'groups_student',
+    'students_statistics',
   ];
 
   static final Config _instance = Config._internal();
@@ -58,9 +68,12 @@ class Config {
     try {
     _minAvailableWordsInVocabulary = json['min_available_words_in_vocabulary'];
     _maxAvailableTranslations = json['max_available_translations'];
-    _maxAvailablTextLength = json['max_available_text_length'];
-    _maxAvailableTranslateTextLength = json['max_available_translate_text_length'];
+    _maxAvailablWordLength = json['max_available_word_length'];
+    _maxAvailableTranslateWordLength = json['max_available_translate_word_length'];
+    _maxAvailableTranslatePhraseLength = json['max_available_translate_phrase_length'];
+    _maxAvailableTranslateLongPhraseLength = json['max_available_translate_long_phrase_length'];
     _maxAvailableWordsInVocabulary = json['max_available_words_in_vocabulary'];
+    _maxTextLength = json['max_text_length'];
     _minTextLength = json['min_text_length'];
     _minPasswordLength = json['min_password_length'];
     _price = json['price'];
@@ -71,11 +84,15 @@ class Config {
   }
 
   String get getAppPage => _app_page;
+  String get getCountryCode => _countryCode;
   int get getMinAvailableWordsInVocabulary => _minAvailableWordsInVocabulary;
   int get getMaxAvailableTranslations => _maxAvailableTranslations;
-  int get getMaxAvailablTextLength => _maxAvailablTextLength;
+  int get getMaxAvailableWordLength => _maxAvailablWordLength;
   int get getMaxAvailableWordsInVocabulary => _maxAvailableWordsInVocabulary;
-  int get getMaxAvailableTranslateTextLength => _maxAvailableTranslateTextLength;
+  int get getMaxAvailableTranslateWordLength => _maxAvailableTranslateWordLength;
+  int get getMaxAvailableTranslatePhraseLength => _maxAvailableTranslatePhraseLength;
+  int get getMaxAvailableTranslateLongPhraseLength => _maxAvailableTranslateLongPhraseLength;
+  int get getMaxTextLength => _maxTextLength;
   int get getMinTextLength => _minTextLength;
   int get getMinPasswordLength => _minPasswordLength;
   int get getPrice => _price;
@@ -89,11 +106,15 @@ class Config {
 
   void printConfig() {
     print('String app_page: $_app_page');
+    print('String countryCode: $_countryCode');
     print('int minAvailableWordsInVocabulary: $_minAvailableWordsInVocabulary');
     print('int maxAvailableTranslations: $_maxAvailableTranslations');
-    print('int maxAvailablTextLength: $_maxAvailablTextLength');
-    print('int maxAvailableTranslateTextLength: $_maxAvailableTranslateTextLength');
+    print('int maxAvailablWordLength: $_maxAvailablWordLength');
+    print('int maxAvailableTranslateWordLength: $_maxAvailableTranslateWordLength');
+    print('int maxAvailabaleTranslatePhraseLength: $_maxAvailableTranslatePhraseLength');
+    print('int maxAvailableTranslateLongPhraseLength: $_maxAvailableTranslateLongPhraseLength');
     print('int maxAvailableWordsInVocabulary: $_maxAvailableWordsInVocabulary');
+    print('int maxTextLength: $_maxTextLength');
     print('int minTextLength: $_minTextLength');
     print('int minPasswordLength: $_minPasswordLength');
     print('int price: $_price');

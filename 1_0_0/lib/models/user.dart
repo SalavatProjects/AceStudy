@@ -4,13 +4,14 @@ class User {
   late String _surname;
   late String _phone;
   late String _login;
-  
   late String _role;
   late String _roleSlug;
   late double _balance;
   late bool _isTrialActive;
   late String? _teacherStatusEndDate;
   late String? _company;
+  late String _appVersion;
+  late bool _privacyPolicy;
   late bool _isUpdateAvailable;
   late int _vocabulariesCreated;
   late int _vocabulariesLearned;
@@ -36,6 +37,8 @@ class User {
     _isTrialActive = json['is_trial_active'];
     _teacherStatusEndDate = json['teacher_status_end_date'];
     _company = json['company'];
+    _appVersion = json['app_version'];
+    _privacyPolicy = json['privacy_policy'];
     _isUpdateAvailable = json['is_update_available'];
     _vocabulariesCreated = json['vocabularies_created'];
     _vocabulariesLearned = json['vocabularies_learned'];
@@ -56,6 +59,8 @@ class User {
   bool get getIsTrialActive => _isTrialActive;
   String? get getTeacherStatusEndDate => _teacherStatusEndDate;
   String? get getCompany => _company;
+  String get getAppVersion => _appVersion;
+  bool get getPrivacyPolicy => _privacyPolicy;
   bool get getIsUpdateAvailable => _isUpdateAvailable;
   int get getVocabulariesCreated => _vocabulariesCreated;
   int get getVocabulariesLearned => _vocabulariesLearned;
@@ -89,6 +94,8 @@ class User {
     print('bool isTrialActive: $_isTrialActive');
     print('String? teacherStatusEndDate: $_teacherStatusEndDate');
     print('String? company: $_company');
+    print('String appVersion: $_appVersion');
+    print('bool privacyPolicy: $_privacyPolicy');
     print('bool isUpadateAvailable: $_isUpdateAvailable');
     print('int vocabulariesCreated: $_vocabulariesCreated');
     print('int vocabulariesLearned: $_vocabulariesLearned');

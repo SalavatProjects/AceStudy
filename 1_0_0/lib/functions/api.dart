@@ -1,4 +1,9 @@
+import 'dart:convert';
+
 import 'http_client_for_api.dart';
+
+import 'package:http/http.dart' as http;
+import '../config/constants.dart';
 
 class Api{
 
@@ -13,6 +18,15 @@ class Api{
     httpClientApi.setBodyMap = {
       'user_id': userId,
       'smartphone_type': smartphoneType
+    };
+    await httpClientApi.postWithoutReturnData();
+  }
+
+  static Future setUserAppVesrion(int userId, String appVersion) async {
+    HttpClientApi httpClientApi = HttpClientApi(url: 'set_user_app_version');
+    httpClientApi.setBodyMap = {
+      'user_id': userId,
+      'app_version': appVersion
     };
     await httpClientApi.postWithoutReturnData();
   }
@@ -65,7 +79,8 @@ class Api{
   }
 
   static Future<void> insertInStudentMistakes(int userId, 
-  int vocabularyId, 
+  int vocabularyId,
+  int? groupId,
   Map<String, List<String>>? wordErrors, 
   Map<String, int> usersAttemptNumber
   ) async{
@@ -73,6 +88,7 @@ class Api{
     httpClientApi.setBodyMap = {
       'user_id': userId,
       'vocabulary_id': vocabularyId,
+      'group_id': groupId,
       'word_errors': wordErrors,
       'users_attempt_number': usersAttemptNumber
     };
@@ -103,14 +119,16 @@ class Api{
     await httpClientApi.getWithoutReturnData();
   }
 
-  static Future<void> saveUser(String name, String surname, String login, String phone, String password) async {
+  static Future<void> saveUser(String name, String surname, String login, String phone, String password, 
+  bool isPrivacyPolicyAgree) async {
     HttpClientApi httpClientApi = HttpClientApi(url: 'save_user');
     httpClientApi.setBodyMap = {
       'name' : name,
       'surname' : surname,
       'login' : login,
       'phone' : phone,
-      'password' : password
+      'password' : password,
+      'privacy_policy' : isPrivacyPolicyAgree
     };
     await httpClientApi.postWithoutReturnData();
   }
@@ -137,6 +155,12 @@ class Api{
   static Future getUserId(String phone) async {
     HttpClientApi httpClientApi = HttpClientApi(url: 'get_user_id');
     httpClientApi.setParameters = 'phone=$phone';
+    return await httpClientApi.getWithReturnData();
+  }
+
+  static Future checkIfUserExist(int userId) async {
+    HttpClientApi httpClientApi = HttpClientApi(url: 'check_if_user_exist');
+    httpClientApi.setParameters = 'user_id=$userId';
     return await httpClientApi.getWithReturnData();
   }
 
@@ -198,6 +222,12 @@ class Api{
       'user_id': userId
     };
     await httpClientApi.postWithoutReturnData();
+    /* Map _bodyMap = {
+      'user_id': userId
+    };
+    var response = await http.post(Uri.parse('${Constants.getScheme}://${Constants.getAddress}/${Constants.getApi}/check_user_role_time'),
+    body: jsonEncode(_bodyMap));
+    print(response.body); */
   }
 
   static Future getGuide() async {
@@ -257,6 +287,34 @@ class Api{
     HttpClientApi httpClientApi = HttpClientApi(url: 'get_user_groups');
     httpClientApi.setBodyMap = {
       'user_id': userId
+    };
+    return await httpClientApi.postWithReturnData();
+  }
+
+  static Future getStudentsStatisticsByVocabulary(int groupId, int vocabularyId) async {
+    HttpClientApi httpClientApi = HttpClientApi(url: 'get_students_statistics_by_vocabulary');
+    httpClientApi.setBodyMap = {
+      'group_id': groupId,
+      'vocabulary_id': vocabularyId
+    };
+    return await httpClientApi.postWithReturnData();
+  }
+
+  static Future clearStudentStatistics(int studentId, int vocabularyId, int groupId) async {
+    HttpClientApi httpClientApi = HttpClientApi(url: 'clear_student_statistics');
+    httpClientApi.setBodyMap = {
+      'student_id': studentId,
+      'vocabulary_id': vocabularyId,
+      'group_id': groupId
+    };
+    await httpClientApi.postWithoutReturnData();
+  }
+
+  static Future getStudentStatisticByGroup(int userId, int groupId) async {
+    HttpClientApi httpClientApi = HttpClientApi(url: 'get_student_statistic_by_group');
+    httpClientApi.setBodyMap = {
+      'user_id': userId,
+      'group_id': groupId
     };
     return await httpClientApi.postWithReturnData();
   }

@@ -46,4 +46,26 @@ class FromJson {
     return participantsList.map((e) => GroupMember.fromJson(e)).toList();
   }
   
+  static Map getStudentsStatisticsByVocabularyFromJson(Map statistics) {
+    Map result = {};
+    result['group_id'] = statistics['group_id'];
+    result['vocabulary_id'] = statistics['vocabulary_id'];
+    result['vocabulary_translations_count'] = statistics['vocabulary_translations_count'];
+    
+    List studentsList = [];
+    statistics['students'].forEach((student) {
+      List<UserMistakeStatistics> userMistakeStatisticsList = [];
+      student['student_attempts'].forEach((attempt){
+       userMistakeStatisticsList.add(UserMistakeStatistics.fromJson(attempt)); 
+      });
+      
+      studentsList.add({
+        'student': GroupMember.fromJson(student),
+        'attempts': userMistakeStatisticsList,
+      });
+    });
+    result['students'] = studentsList;
+    
+    return result;
+  }
 }

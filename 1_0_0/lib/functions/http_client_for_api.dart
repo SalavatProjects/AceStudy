@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:convert';
 
 import '../config/constants.dart';
+import 'package:http/http.dart' as http;
 
 class HttpClientApi {
   late Map _bodyMap;
@@ -19,7 +20,7 @@ class HttpClientApi {
     _parameters = str;
   }
 
-  Future postWithReturnData() async{
+  /* Future postWithReturnData() async{
     var client = HttpClient();
     var body = jsonEncode(_bodyMap);
       try {
@@ -99,6 +100,53 @@ class HttpClientApi {
       print(e);
     } finally {
       client.close();
+    }
+  } */
+
+  Future postWithReturnData() async{
+    var response = await http.post(Uri.parse('${Constants.getScheme}://${Constants.getAddress}/${Constants.getApi}${url}'),
+    headers: {"Content-Type": "application/json"},
+    body: json.encode(_bodyMap));
+    // print(url);
+    // print('${Constants.getScheme}://${Constants.getAddress}/${Constants.getApi}${url}');
+    // print(response.body);
+    if (response.statusCode == 200)
+    {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception('Unable to load data for url: ${url}');
+    }
+  }
+
+  Future<void> postWithoutReturnData() async {
+    var response = await http.post(Uri.parse('${Constants.getScheme}://${Constants.getAddress}/${Constants.getApi}${url}'),
+    headers: {"Content-Type": "application/json"},
+    body: json.encode(_bodyMap));
+    // print(url);
+    // print(_bodyMap);
+    // print(response.body);
+    if(response.statusCode != 200)
+    {
+      print(response.body);
+    }
+  }
+
+  Future getWithReturnData() async {
+    var response = await http.get(Uri.parse('${Constants.getScheme}://${Constants.getAddress}/${Constants.getApi}${url}?${_parameters}'));
+    // print(response.body);
+    if (response.statusCode == 200)
+    {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception('Unable to load data for url: ${url}');
+    }
+  }
+
+  Future<void> getWithoutReturnData() async {
+    var response = await http.get(Uri.parse('${Constants.getScheme}://${Constants.getAddress}/${Constants.getApi}${url}?${_parameters}'));
+    if(response.statusCode != 200)
+    {
+      print(response.body);
     }
   }
 }

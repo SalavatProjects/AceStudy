@@ -84,10 +84,10 @@ class DrawerView extends StatelessWidget {
               DrawerButtons(button_name: 'Путеводитель', 
               icon: Icons.format_list_bulleted, 
               page_name: 'guide'),
-              DrawerButtons(button_name: settings_language[app_language]!.settings,
+              /* DrawerButtons(button_name: settings_language[app_language]!.settings,
               icon: Icons.settings,
               page_name: 'settings',
-              )
+              ) */
             ],
           );
         },
