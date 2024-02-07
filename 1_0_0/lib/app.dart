@@ -41,31 +41,6 @@ class AppState extends State<App>{
     _config.getConfigFromJson(await Api.getJsonConfig());
     // _config.printConfig();
 
-    // var client = HttpClient();
-    // HttpClientRequest request = await client.get('http://studyenglish/api/v1/get_user_data?user_id=5', 80, '/');
-    /* HttpClientRequest request = await client.getUrl(Uri(
-        scheme: 'http',
-        host: '10.0.2.2',
-        port: 80,
-        path: "api/v1/get_user_data",
-        query: 'user_id=5')); */
-        /* request.headers.add(HttpHeaders.contentTypeHeader, 'application/json');
-
-        HttpClientResponse response = await request.close();
-        var responseBody = await response.transform(utf8.decoder).join();
-        var jsonData = jsonDecode(responseBody);*/
-        /* print(Uri(
-        scheme: 'http',
-        host: '10.0.2.2',
-        port: 80,
-        path: "api/v1/get_user_data",
-        query: 'user_id=5')); */
-        // print(jsonData); 
-        
-  /* var response = await http.post(Uri.parse('http://5.35.16.108/api/v1/get_guide'));
-  print(response.body); */
-
-      // print(await Api.getJsonUserData(5));
       if (await Authorization.isLoggedIn()){
         SharedPreferences prefs = await SharedPreferences.getInstance();
         // print(prefs.getInt('userId'));

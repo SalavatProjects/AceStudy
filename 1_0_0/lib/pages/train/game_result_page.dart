@@ -25,11 +25,11 @@ class _GameResultPageState extends State<GameResultPage> {
   int _errorTranlationsCount = 0;
   late int _totalScore;
   List<String> _notes = [
-    'Совсем плохо освоен словарь! Попробуйте снова',
-    'Не совсем хорошо, лучше немного постараться',
-    'Хорошо, но можно лучше',
-    'Словарь отлично освоен, совсем немного до 100 баллов',
-    'Поздравляем! Словарь превосходно освоен на все слова! Так держать!'
+    'Совсем плохо освоен словарь! Попробуйте снова', //redAccent[700]
+    'Не совсем хорошо, лучше немного постараться', //orange[900]
+    'Хорошо, но можно лучше', //yellow[900]
+    'Словарь отлично освоен, совсем немного до 100 баллов', //lime[800]
+    'Поздравляем! Словарь превосходно освоен на все слова! Так держать!' //green[800]
   ];
   bool _isBackButtonPressed = false;
 
@@ -82,7 +82,7 @@ class _GameResultPageState extends State<GameResultPage> {
               Center(
                 child: Padding(padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
                 child: Text('Вы набрали $_totalPercent баллов из 100!',
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.w700),
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.w700, color: Colors.cyan[800]),
                 softWrap: true,),),
               ),
               SizedBox(height: 10,),
@@ -90,41 +90,41 @@ class _GameResultPageState extends State<GameResultPage> {
               Center(
                 child: Padding(padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
                 child: Text(_notes[0], 
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500, color: Colors.redAccent[700]),
                 textAlign: TextAlign.center,),),
               ),
               if (_totalPercent > 25 && _totalPercent <= 50)
               Center(
                 child: Padding(padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
                 child: Text(_notes[1],
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500, color: Colors.orange[900]),
                 textAlign: TextAlign.center,),),
               ),
               if (_totalPercent > 50 && _totalPercent <= 75)
               Center(
                 child: Padding(padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
                 child: Text(_notes[2],
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500, color: Colors.yellow[900]),
                 textAlign: TextAlign.center,),),
               ),
               if (_totalPercent > 75 && _totalPercent < 100)
               Center(
                 child: Padding(padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
                 child: Text(_notes[3],
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500, color: Colors.lime[800]),
                 textAlign: TextAlign.center,),),
               ),
               if (_totalPercent == 100)
               Center(
                 child: Padding(padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
                 child: Text(_notes[4],
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500, color: Colors.green[800]),
                 textAlign: TextAlign.center,),),
               ),
               SizedBox(height: 10,),
               if (_totalPercent != 100)
-              Text('Вы не угадали следующие слова',
-              style: TextStyle(fontSize: 18),),
+              Text('Вы ошиблись в следующих словах',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400, color: Colors.cyan[900]),),
               if (_totalPercent != 100)
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),

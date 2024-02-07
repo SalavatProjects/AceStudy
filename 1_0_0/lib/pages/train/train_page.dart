@@ -53,7 +53,8 @@ class _TrainPageState extends State<TrainPage> {
               }
               
             } else {
-              return CircularProgressIndicator();
+              return Center(
+                child: CircularProgressIndicator());
             }
           },
         ),

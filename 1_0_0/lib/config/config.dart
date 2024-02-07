@@ -28,6 +28,8 @@ class Config {
   late final int _maxTextLength;
   late final int _minTextLength;
   late final int _minPasswordLength;
+  late final String _technicalSupport;
+  late final String _telegramGroup;
   late final int _price;
 
   
@@ -76,6 +78,8 @@ class Config {
     _maxTextLength = json['max_text_length'];
     _minTextLength = json['min_text_length'];
     _minPasswordLength = json['min_password_length'];
+    _technicalSupport = json['technical_support'];
+    _telegramGroup = json['telegram_group'];
     _price = json['price'];
     } catch(e){
       print(e);
@@ -95,6 +99,8 @@ class Config {
   int get getMaxTextLength => _maxTextLength;
   int get getMinTextLength => _minTextLength;
   int get getMinPasswordLength => _minPasswordLength;
+  String get getTechnicalSupport => _technicalSupport;
+  String get getTelegramGroup => _telegramGroup;
   int get getPrice => _price;
   Map<String, Widget> get getPages => _pages;
 
@@ -117,6 +123,8 @@ class Config {
     print('int maxTextLength: $_maxTextLength');
     print('int minTextLength: $_minTextLength');
     print('int minPasswordLength: $_minPasswordLength');
+    print('String technicalSupport: $_technicalSupport');
+    print('String telegramGroup: $_telegramGroup');
     print('int price: $_price');
     print('Map <String, Widget> pages: $_pages');
     print('List<String> pagesName: $_pagesName');

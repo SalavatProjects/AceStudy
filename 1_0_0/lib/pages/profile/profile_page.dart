@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../models/user.dart';
+import '../../config/config.dart';
 import '../../widgets/flushbar.dart';
 import '../../functions/authorization.dart';
 import '../../functions/launch_url.dart';
@@ -20,7 +21,7 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage>{
   bool _dataLoaded = false;
   User _user = User();
-  
+  Config _config = Config();
 
   void initState() {
     super.initState();
@@ -113,14 +114,14 @@ class _ProfilePageState extends State<ProfilePage>{
                   alignment: Alignment.centerLeft,
                   child: ElevatedButton(
                     onPressed: () async {
-                      await launch_url(Uri.parse('https://t.me/salavat_sh1997'));
+                      await launch_url(Uri.parse(_config.getTechnicalSupport));
                     },
                     child: Text('Тех. поддержка')),
                 ),
                 Align(
                   alignment: Alignment.centerLeft,
                   child: IconButton(onPressed: () async {
-                    await launch_url(Uri.parse('https://t.me/ace_study_community'));
+                    await launch_url(Uri.parse(_config.getTelegramGroup));
                   },
                   icon: Icon(Icons.telegram),),
                 ),
