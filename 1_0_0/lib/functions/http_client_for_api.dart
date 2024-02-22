@@ -107,9 +107,9 @@ class HttpClientApi {
     var response = await http.post(Uri.parse('${Constants.getScheme}://${Constants.getAddress}/${Constants.getApi}${url}'),
     headers: {"Content-Type": "application/json"},
     body: json.encode(_bodyMap));
-    // print(url);
-    // print('${Constants.getScheme}://${Constants.getAddress}/${Constants.getApi}${url}');
-    // print(response.body);
+    /* print(url);
+    print('${Constants.getScheme}://${Constants.getAddress}/${Constants.getApi}${url}');
+    print(response.body); */
     if (response.statusCode == 200)
     {
       return jsonDecode(response.body);

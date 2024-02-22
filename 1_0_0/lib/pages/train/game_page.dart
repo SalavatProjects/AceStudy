@@ -110,6 +110,7 @@ class _GamePageState extends State<GamePage> {
                 });
             }
             // print(str.length);
+            // print(_isTranslationsLengthsMore(_config.getMaxAvailableTranslateWordLength, _currentUserTranslationsLengths));
             return SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 0.0, horizontal: 16.0),
@@ -141,7 +142,7 @@ class _GamePageState extends State<GamePage> {
                           if (_currentUserTranslations[index].length <= _config.getMaxAvailableTranslateWordLength)
                             {
                               return _UserTranslationContainer(
-                                width: 180, 
+                                width: 170, 
                                 translation: _currentUserTranslations[index], 
                                 answerColor: _checkAnswerColor[index], 
                                 isMarquee: false);
@@ -175,7 +176,7 @@ class _GamePageState extends State<GamePage> {
                               return Column(
                                 children: [
                                   _UserTranslationContainer(
-                                    width: 180, 
+                                    width: 170, 
                                     translation: _currentUserTranslations[index], 
                                     answerColor: _checkAnswerColor[index], 
                                     isMarquee: false),
@@ -215,57 +216,72 @@ class _GamePageState extends State<GamePage> {
                         }),
                       ),
                     )
+                    else if (_currentUserTranslations.length == 1)
+                    SizedBox(
+                      width: double.infinity,
+                      height: 180,
+                      child: Align(
+                        alignment: Alignment.topCenter,
+                        child: _UserTranslationContainer(
+                          width: 170,
+                          translation: _currentUserTranslations[0],
+                          answerColor: _checkAnswerColor[0],
+                          isMarquee: false,),),
+                    )
                     else
                     SizedBox(
-                      height: 140,
+                      width: double.infinity,
+                      height: 180,
                       child:
                       Wrap(
                         spacing: 8.0,
                         runSpacing: 6.0,
                         children: List.generate(_currentUserTranslations.length,
                         (index) => _UserTranslationContainer(
-                          width: 180, 
+                          width: 170, 
                           translation: _currentUserTranslations[index], 
                           answerColor: _checkAnswerColor[index], 
                           isMarquee: false)
                         ),)
                     ),
                     SizedBox(
-                      height: 120,
+                      height: 130,
                       child: _isNextPageButton ? SizedBox.shrink()
                       : 
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Center(
-                      child: Text(_currentTranslations.length == 1 ? 'Введите перевод слова ${widget.words[pageIndex].getName}'
-                      : 'Введите один из переводов слова ${widget.words[pageIndex].getName}:',
-                      style: TextStyle(fontSize: 18),
-                      softWrap: true,
-                      textAlign: TextAlign.center,),
-                    ),
-                    Form(
-                      key: _formKeys[pageIndex],
-                      autovalidateMode: AutovalidateMode.disabled,
-                      child: TextFormField(
-                        controller: _translateController,
-                        autocorrect: false,
-                        enableSuggestions: false,
-                        keyboardType: TextInputType.visiblePassword,
-                        decoration: InputDecoration(label: Text('Перевод')),
-                        validator: (text) {
-                          if (Validator.checkIsTextIsEmpty(text)) {
-                            return 'Поле не должно быть пустым';
-                          }
-                          if (Validator.checkTranslateLongPhraseLength(text!)){
-                            return 'Допускается только длина ${_config.getMaxAvailableTranslateLongPhraseLength} символов';
-                          }
-                        },
-                      )),
-                        ],
+                      Padding(
+                        padding: const EdgeInsets.only(top: 10.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Center(
+                        child: Text(_currentTranslations.length == 1 ? 'Введите перевод слова ${widget.words[pageIndex].getName}'
+                        : 'Введите один из переводов слова ${widget.words[pageIndex].getName}:',
+                        style: TextStyle(fontSize: 18),
+                        softWrap: true,
+                        textAlign: TextAlign.center,),
+                                            ),
+                                            Form(
+                        key: _formKeys[pageIndex],
+                        autovalidateMode: AutovalidateMode.disabled,
+                        child: TextFormField(
+                          controller: _translateController,
+                          autocorrect: false,
+                          enableSuggestions: false,
+                          keyboardType: TextInputType.visiblePassword,
+                          decoration: InputDecoration(label: Text('Перевод')),
+                          validator: (text) {
+                            if (Validator.checkIsTextIsEmpty(text)) {
+                              return 'Поле не должно быть пустым';
+                            }
+                            if (Validator.checkTranslateLongPhraseLength(text!)){
+                              return 'Допускается только длина ${_config.getMaxAvailableTranslateLongPhraseLength} символов';
+                            }
+                          },
+                        )),
+                          ],
+                        ),
                       ),
                     ),
-                    
                       _isNextPageButton ? Padding(
                         padding: const EdgeInsets.only(top: 8.0),
                         child: ElevatedButton(
@@ -401,44 +417,42 @@ class _UserTranslationContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.only(bottom: 8.0),
-        child: Container(
-          width: width,
-          height: 40,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(
-            color: Colors.black,
-            width: 1)),
-          child: Center(
-            child: isMarquee ?
-            Padding(
-              padding: const EdgeInsets.only(top: 4.0),
-              child: Marquee(
-                text: translation,
-                style: TextStyle(fontSize: 18, 
-              fontWeight: FontWeight.w500,
-              color: answerColor),
-                scrollAxis: Axis.horizontal,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                blankSpace: 20.0,
-                velocity: 100.0,
-                pauseAfterRound: Duration(seconds: 1),
-                startPadding: 10.0,
-                accelerationDuration: Duration(seconds: 1),
-                accelerationCurve: Curves.linear,
-                decelerationDuration: Duration(milliseconds: 500),
-                decelerationCurve: Curves.easeOut,),
-            )
-            : 
-            Text(translation,
-            style: TextStyle(fontSize: 18, 
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8.0),
+      child: Container(
+        width: width,
+        height: 40,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+          color: Colors.black,
+          width: 1)),
+        child: Center(
+          child: isMarquee ?
+          Padding(
+            padding: const EdgeInsets.only(top: 4.0),
+            child: Marquee(
+              text: translation,
+              style: TextStyle(fontSize: 18, 
             fontWeight: FontWeight.w500,
             color: answerColor),
-            softWrap: true,
-            ),
+              scrollAxis: Axis.horizontal,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              blankSpace: 20.0,
+              velocity: 100.0,
+              pauseAfterRound: Duration(seconds: 1),
+              startPadding: 10.0,
+              accelerationDuration: Duration(seconds: 1),
+              accelerationCurve: Curves.linear,
+              decelerationDuration: Duration(milliseconds: 500),
+              decelerationCurve: Curves.easeOut,),
+          )
+          : 
+          Text(translation,
+          style: TextStyle(fontSize: 18, 
+          fontWeight: FontWeight.w500,
+          color: answerColor),
+          softWrap: true,
           ),
         ),
       ),

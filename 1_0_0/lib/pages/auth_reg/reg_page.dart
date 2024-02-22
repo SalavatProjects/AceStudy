@@ -1,7 +1,7 @@
 import 'dart:math';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:extended_masked_text/extended_masked_text.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../utils/validators.dart' as customValidator;
@@ -27,8 +27,14 @@ class _RegPageState extends State<RegPage> {
   TextEditingController _loginController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
   TextEditingController _confirmPasswrodController = TextEditingController();
-  var _phoneController = new MaskedTextController(mask: '+7 (###) ###-##-##',
-  translator: {'#': new RegExp(r'[0-9]')});
+  /* var _phoneController = new MaskedTextController(mask: '+7 (###) ###-##-##',
+  translator: {'#': new RegExp(r'[0-9]')}); */
+  TextEditingController _phoneController = TextEditingController();
+  var _maskPhoneFormatter = new MaskTextInputFormatter(
+    mask: '+7 (###) ###-##-##',
+    filter: {"#": RegExp(r'[0-9]'),},
+    type: MaskAutoCompletionType.lazy
+  );
   bool _isLoginChecking = false;
   bool _isPhoneChecking = false;
   bool _passwordVisible = false;
@@ -91,7 +97,7 @@ class _RegPageState extends State<RegPage> {
 
   Future<dynamic> _checkPhone(phone) async {
     // sync validation
-    if(customValidator.Validator.checkIsTextIsEmpty(phone)) {
+    if(customValidator.Validator.checkIsTextIsEmpty(phone) || phone.length == 1) {
       _phoneValidationMsg = 'Поле не должно быть пустым';
       setState(() {
         
@@ -118,7 +124,7 @@ class _RegPageState extends State<RegPage> {
 
   void initState(){
     super.initState();
-    _phoneController.beforeChange = (String previousBefore, String nextBefore) {
+    /* _phoneController.beforeChange = (String previousBefore, String nextBefore) {
         _phoneController.afterChange =(String previousAfter, String nextAfer) {
           if (nextBefore.startsWith('+7', 1))
           {
@@ -126,7 +132,7 @@ class _RegPageState extends State<RegPage> {
          } 
         };
       return true;
-    };
+    }; */
   }
 
   @override
@@ -213,6 +219,7 @@ class _RegPageState extends State<RegPage> {
                               Focus(
                                 child: TextFormField(
                                   controller: _phoneController,
+                                  inputFormatters: [_maskPhoneFormatter],
                                   keyboardType: TextInputType.number,
                                   autovalidateMode: AutovalidateMode.onUserInteraction,
                                   validator: (value) => _phoneValidationMsg,
@@ -223,7 +230,7 @@ class _RegPageState extends State<RegPage> {
                                 ),
                                 ),
                                 onFocusChange: (hasFocus) {
-                                  if (!hasFocus) _checkPhone(_phoneController.unmasked);
+                                  if (!hasFocus) _checkPhone(_config.getCountryCode + _maskPhoneFormatter.getUnmaskedText());
                                 },
                               ),
                               TextFormField(
@@ -300,7 +307,7 @@ class _RegPageState extends State<RegPage> {
                               fontSize: 16, color: Colors.deepPurple[900],decoration: TextDecoration.underline),
                               recognizer: TapGestureRecognizer()
                               ..onTap = () {
-                                launchUrl(Uri.parse('http://5.35.16.108/privacy_policy'));
+                                launchUrl(Uri.parse('http://5.35.16.108/AceStudySite/privacy_policy'));
                               }
                           )
                         ]))
@@ -323,7 +330,7 @@ class _RegPageState extends State<RegPage> {
                         'name' : _nameController.text.trim().capitalize(),
                         'surname': _surnameController.text.trim().capitalize(),
                         'login': _loginController.text.trim().capitalize(),  
-                        'phone' : _config.getCountryCode + _phoneController.unmasked,
+                        'phone' : _config.getCountryCode + _maskPhoneFormatter.getUnmaskedText(),
                         'password' : _passwordController.text,
                         'privacy_policy' : _isPrivacyPolicyAgree,
                       };

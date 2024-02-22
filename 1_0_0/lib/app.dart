@@ -4,7 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:io';
 import 'dart:convert';
-
+import 'package:http/http.dart' as http;
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 import 'home.dart';
 import 'pages/auth_reg/login_page.dart';
@@ -37,6 +38,10 @@ class AppState extends State<App>{
   
 
   Future<bool> _checkLogin() async {
+    // var response = await  http.get(Uri.parse('https://dummyjson.com/products/1'));
+    /* var response = await  http.post(Uri.parse('http://serverq5.ace-study.ru/api/v1/get_user_data?user_id=7'));
+    print(response.body); */
+    // print('hi');
     // await Future.delayed(Duration(seconds: 3));
     _config.getConfigFromJson(await Api.getJsonConfig());
     // _config.printConfig();
@@ -61,11 +66,17 @@ class AppState extends State<App>{
           {
             await Api.setUserAppVesrion(_user.getId, Constants.getAppVersion);
           }
-          if (Platform.isAndroid){
+          if (kIsWeb)
+          {
+            await Api.checkUserSmartphoneType(prefs.getInt('userId')!, 'Web');
+          } else {
+            if (Platform.isAndroid){
             await Api.checkUserSmartphoneType(prefs.getInt('userId')!, 'Android');
           } else if (Platform.isIOS){
             await Api.checkUserSmartphoneType(prefs.getInt('userId')!, 'iOS');
           }
+          }
+          
           // _user.printUser();
           return true;
         }

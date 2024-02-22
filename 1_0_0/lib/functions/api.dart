@@ -273,10 +273,11 @@ class Api{
     return await httpClientApi.postWithReturnData();
   }
 
-  static updateGroup(int groupId, List<int> vocabulariesId, List<int> groupMembersId) async {
+  static updateGroup(int groupId, String groupName, List<int> vocabulariesId, List<int> groupMembersId) async {
     HttpClientApi httpClientApi = HttpClientApi(url: 'update_group');
     httpClientApi.setBodyMap = {
       'group_id': groupId,
+      'group_name': groupName,
       'vocabularies_id': vocabulariesId,
       'group_members_id': groupMembersId
     };

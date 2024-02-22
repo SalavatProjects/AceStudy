@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../blocs/user_statistics/user_statistics_bloc.dart';
 import '../../../widgets/user_statistic.dart';
+import '../student/student_groups_for_statistic.dart';
 
 class TeacherStatisticsPage extends StatefulWidget {
   const TeacherStatisticsPage({super.key});
@@ -39,7 +40,26 @@ class _TeacherStatisticsPageState extends State<TeacherStatisticsPage> {
             {
               _statistics = state.statistics;
               return SingleChildScrollView(
-                child: _statistics.isNotEmpty ?
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 0.0, horizontal: 16.0),
+                      child: Align(
+                        alignment: Alignment.centerRight,
+                        child: TextButton(onPressed: () {
+                          Navigator.push(context, MaterialPageRoute(builder: 
+                          (BuildContext context) => StudentGroupsForStatistic()));
+                        },
+                        style: TextButton.styleFrom(
+                          // padding: EdgeInsets.zero,
+                          minimumSize: Size.zero,
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap
+                        ),
+                        child: Text('Статистика, где я участник группы')),
+                      ),
+                    ),
+                    _statistics.isNotEmpty ?
                 UserStatistic(userStatisticsBloc: _userStatisticsBloc, statistics: _statistics)
                 :
                 Padding(
@@ -48,6 +68,8 @@ class _TeacherStatisticsPageState extends State<TeacherStatisticsPage> {
                       style: TextStyle(fontSize: 24, fontWeight: FontWeight.w600, color: Colors.grey.shade500),
                       textAlign: TextAlign.center,),
                 ),
+                  ],)
+                 
               );
             } else {
               return Center(

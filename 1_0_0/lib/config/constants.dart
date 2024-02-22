@@ -1,8 +1,8 @@
 class Constants {
-  // static const String _address = '5.35.16.108';
-  static const String _address = '10.0.2.2';
+  static const String _address = 'serverq5.ace-study.ru';
+  // static const String _address = '10.0.2.2';
   // static const int _port = 8080;
-  static const String _scheme = 'http';
+  static const String _scheme = 'https';
   static const String _api = 'api/v1/';
 
   static const String _appVersion = '1.0.0';

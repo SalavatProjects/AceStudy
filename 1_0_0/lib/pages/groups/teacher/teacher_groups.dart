@@ -6,6 +6,7 @@ import '../../../models/group.dart';
 import '../../../functions/api.dart';
 import 'create_group_page.dart';
 import 'edit_group_page.dart';
+import 'teacher_groups_as_member.dart';
 
 class TeacherGroups extends StatefulWidget {
   TeacherGroups({super.key});
@@ -42,6 +43,16 @@ class _TeacherGroupsState extends State<TeacherGroups> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    TextButton(onPressed: () {
+                      Navigator.push(context, 
+                      MaterialPageRoute(builder: (BuildContext context) => TeacherGroupsAsMember()));
+                    },
+                    style: TextButton.styleFrom(
+                      // padding: EdgeInsets.zero,
+                      minimumSize: Size.zero,
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap
+                    ), 
+                    child: Text('Группы, где я участник')),
                     TextButton(
                   onPressed: () {
                     Navigator.push(

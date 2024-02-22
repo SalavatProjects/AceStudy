@@ -9,6 +9,7 @@ import '../../../models/vocabulary.dart';
 import '../../../utils/validators.dart';
 import '../../../functions/api.dart';
 import '../../../home.dart';
+import '../../../functions/modify.dart';
 import 'search_user_page.dart';
 import 'add_vocabulary.dart';
 
@@ -223,7 +224,7 @@ class _EditGroupPageState extends State<EditGroupPage> {
                   _vocabularies.forEach((element) {
                     _vocabulariesId.add(element.getId);
                   });
-                  await Api.updateGroup(widget.group.getId, _vocabulariesId, _groupMembersId);
+                  await Api.updateGroup(widget.group.getId, _groupNameController.text.trim().capitalize(), _vocabulariesId, _groupMembersId);
                   Navigator.push(context, MaterialPageRoute(builder: (context) => HomeView()));
                 }
               },

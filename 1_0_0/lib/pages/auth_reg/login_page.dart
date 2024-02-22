@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:extended_masked_text/extended_masked_text.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:back_button_interceptor/back_button_interceptor.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
+// import 'package:flutter/foundation.dart' show kIsWeb;
 
 import 'reg_page.dart';
 import 'phone_page.dart';
@@ -20,8 +21,14 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  var _phoneController = new MaskedTextController(mask: '+7 (###) ###-##-##',
+  /* var _phoneController = new MaskedTextController(mask: '+7 (###) ###-##-##',
   translator: {'#': new RegExp(r'[0-9]')},
+  ); */
+  TextEditingController _phoneController = TextEditingController();
+  var _maskPhoneFormatter = new MaskTextInputFormatter(
+    mask: '+7 (###) ###-##-##',
+    filter: {"#": RegExp(r'[0-9]'),},
+    type: MaskAutoCompletionType.lazy
   );
   TextEditingController _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
@@ -34,7 +41,7 @@ class _LoginPageState extends State<LoginPage> {
 
   void initState(){
     super.initState();
-    _phoneController.beforeChange = (String previousBefore, String nextBefore) {
+    /* _phoneController.beforeChange = (String previousBefore, String nextBefore) {
         _phoneController.afterChange =(String previousAfter, String nextAfer) {
           if (nextBefore.startsWith('+7', 1))
           {
@@ -42,7 +49,7 @@ class _LoginPageState extends State<LoginPage> {
          } 
         };
       return true;
-    };
+    }; */
 
     BackButtonInterceptor.add((stopDefaultButtonEvent, routeInfo,) {
       if (routeInfo.ifRouteChanged(context)) {
@@ -105,8 +112,15 @@ class _LoginPageState extends State<LoginPage> {
                     width: 300,
                     child: Column(
                       children: [
+                        /* InternationalPhoneNumberInput(onInputChanged: (PhoneNumber _phone) {
+                          print(_phone.phoneNumber);
+                        },
+                        selectorConfig: SelectorConfig(showFlags: false),
+                        countries: ['RU'],
+                        ), */
                         TextFormField(
                           controller: _phoneController,
+                          inputFormatters: [_maskPhoneFormatter],
                           keyboardType: TextInputType.number,
                           validator: (text) {
                             if (Validator.checkIsTextIsEmpty(text)){
@@ -116,6 +130,9 @@ class _LoginPageState extends State<LoginPage> {
                           decoration: InputDecoration(
                             hintText: '+${_config.getCountryCode} (000) 000-00-00',
                             labelText: 'Номер телефона'),
+                            /* onChanged: (text) {
+                              print(_config.getCountryCode + _maskPhoneFormatter.getUnmaskedText());
+                            }, */
                         ),
                         TextFormField(
                           controller: _passwordController,
@@ -151,13 +168,14 @@ class _LoginPageState extends State<LoginPage> {
                               _isAuthButtonActive = false;
                             });
                             // print(await Api.logIn(_phoneController.unmasked, _passwordController.text));
-                          if (await Api.checkPhoneIsExist(_config.getCountryCode + _phoneController.unmasked))
+                          if (await Api.checkPhoneIsExist(_config.getCountryCode + _maskPhoneFormatter.getUnmaskedText()))
                           {
-                            if (await Api.logIn(_config.getCountryCode + _phoneController.unmasked, _passwordController.text))
+                            if (
+                              await Api.logIn(_config.getCountryCode + _maskPhoneFormatter.getUnmaskedText(), _passwordController.text))
                           {
                             await Authorization.login();
                             SharedPreferences prefs = await SharedPreferences.getInstance();
-                            await prefs.setInt('userId', await Api.getUserId(_config.getCountryCode + _phoneController.unmasked));
+                            await prefs.setInt('userId', await Api.getUserId(_config.getCountryCode + _maskPhoneFormatter.getUnmaskedText()));
                             Navigator.push(
                             context, MaterialPageRoute(builder: (context) => App())); 
                             } else {

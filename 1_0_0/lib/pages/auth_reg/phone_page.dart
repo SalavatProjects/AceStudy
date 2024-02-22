@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:extended_masked_text/extended_masked_text.dart';
+// import 'package:extended_masked_text/extended_masked_text.dart';
 import 'dart:math';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 import '../../utils/validators.dart';
 import '../../functions/api.dart';
@@ -15,8 +16,14 @@ class PhonePage extends StatefulWidget {
 }
 
 class _PhonePageState extends State<PhonePage> {
-  var _phoneController = new MaskedTextController(mask: '+7 (###) ###-##-##',
-  translator: {'#': new RegExp(r'[0-9]')});
+  /* var _phoneController = new MaskedTextController(mask: '+7 (###) ###-##-##',
+  translator: {'#': new RegExp(r'[0-9]')}); */
+  TextEditingController _phoneController = TextEditingController();
+  var _maskPhoneFormatter = new MaskTextInputFormatter(
+    mask: '+7 (###) ###-##-##',
+    filter: {"#": RegExp(r'[0-9]'),},
+    type: MaskAutoCompletionType.lazy
+  );
   final _formKey = GlobalKey<FormState>();
   bool _isPhoneInfoVisible = false;
   bool _isNextButtonActive = true;
@@ -26,7 +33,7 @@ class _PhonePageState extends State<PhonePage> {
 
   void initState(){
     super.initState();
-    _phoneController.beforeChange = (String previousBefore, String nextBefore) {
+    /* _phoneController.beforeChange = (String previousBefore, String nextBefore) {
         _phoneController.afterChange =(String previousAfter, String nextAfer) {
           if (nextBefore.startsWith('+7', 1))
           {
@@ -34,7 +41,7 @@ class _PhonePageState extends State<PhonePage> {
          } 
         };
       return true;
-    };
+    }; */
   }
 
   @override
@@ -66,6 +73,7 @@ class _PhonePageState extends State<PhonePage> {
                   children: [
                     TextFormField(
                       controller: _phoneController,
+                      inputFormatters: [_maskPhoneFormatter],
                       keyboardType: TextInputType.number,
                       validator: (text) {
                         if (Validator.checkIsTextIsEmpty(text)){
@@ -83,10 +91,10 @@ class _PhonePageState extends State<PhonePage> {
                         _isNextButtonActive = false;
                         _isPhoneInfoVisible = false;
                       });
-                      if (await Api.checkPhoneIsExist(_config.getCountryCode + _phoneController.unmasked)){
+                      if (await Api.checkPhoneIsExist(_config.getCountryCode + _maskPhoneFormatter.getUnmaskedText())){
                         _verificationCode = Random().nextInt(9000) + 1000;
                         _data = {
-                          'phone' : _config.getCountryCode + _phoneController.unmasked
+                          'phone' : _config.getCountryCode + _maskPhoneFormatter.getUnmaskedText()
                         };
                         await Api.send4DigitCode(_data['phone'], _verificationCode, false);
                         Navigator.push(context, 

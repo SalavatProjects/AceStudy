@@ -165,7 +165,8 @@ class VocabulariesViewState extends State<VocabulariesView> {
               ],
             ); }
           } else {
-            return const CircularProgressIndicator();
+            return Center(
+              child: const CircularProgressIndicator());
           }
         },
       )),
