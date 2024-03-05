@@ -46,7 +46,7 @@ class _TrainPageState extends State<TrainPage> {
               } else {
                 return Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-                  child: Text('У вас еще нет ни одного словаря, давайте создадим!',
+                  child: Text('У вас еще нет ни одного словаря, давайте создадим! Для этого перейдите во вкладку Мои словари',
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.w600, color: Colors.grey.shade500),
                   textAlign: TextAlign.center,),
                 );

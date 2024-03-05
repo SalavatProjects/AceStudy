@@ -307,7 +307,7 @@ class _RegPageState extends State<RegPage> {
                               fontSize: 16, color: Colors.deepPurple[900],decoration: TextDecoration.underline),
                               recognizer: TapGestureRecognizer()
                               ..onTap = () {
-                                launchUrl(Uri.parse('http://5.35.16.108/AceStudySite/privacy_policy'));
+                                launchUrl(Uri.parse('https://serverq5.ace-study.ru/privacy_policy'));
                               }
                           )
                         ]))

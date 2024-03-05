@@ -86,14 +86,14 @@ Config _config = Config();
                     ),
               ),
             ),
-             Padding(padding: EdgeInsets.symmetric(horizontal: 16.0, vertical:8.0),
+             /* Padding(padding: EdgeInsets.symmetric(horizontal: 16.0, vertical:8.0),
              child: Container(
               width: double.infinity,
               height: 320,
               color: Colors.grey[300],
               child: Center(
                 child: Text('Иконки для словаря')),
-             ),)
+             ),) */
           ],
           ),
       )),
@@ -103,7 +103,7 @@ Config _config = Config();
           style: ButtonStyle(
             backgroundColor: MaterialStateProperty.resolveWith((states) {
               if (states.contains(MaterialState.disabled))
-                return Colors.green;
+                return Colors.grey;
             })),
           onPressed: _createVocabuluryButtonPressed ? 
           null
