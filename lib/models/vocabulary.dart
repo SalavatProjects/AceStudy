@@ -3,7 +3,7 @@ import '../functions/from_json.dart';
 import '../functions/modify.dart';
 
 class Vocabulary{
-  // hi
+  // hie23
   int id;
   String name;
   String icon;
